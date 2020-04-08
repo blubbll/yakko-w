@@ -2,6 +2,10 @@
   box-sizing: border-box;
 }
 
+:root{
+  --bg: #1d438f;
+}
+
 body {
   background: white;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -54,7 +58,7 @@ body {
   .video-wrap .video-inner {
     width: 3vw;
     height: 3vw;
-    border: 20px solid #FFF;
+    border: 20px solid black;
     -webkit-transform: rotateZ(-5deg);
     transform: rotateZ(-5deg);
   }
@@ -123,6 +127,7 @@ body {
 }
 
 .action {
+  outline-width: 0;
   background: none;
   border: 2px solid black;
   border-radius: 4rem;
@@ -135,6 +140,10 @@ body {
   font-weight: bold;
   overflow: hidden;
   position: relative;
+  cursor: pointer;
+}
+.action:hover{
+  background: var(--bg);
 }
 .action.action--play {
   display: block;
@@ -148,7 +157,12 @@ body {
   opacity: 1;
   pointer-events: auto;
 }
+.action.action--close:hover {
+  background: rgba(255,255,255,.5);
+}
 .action.action--close {
+  background: var(--bg);
+  backdrop-filter: blur(3rem);
   position: absolute;
   z-index: 1000;
   top: 30px;
