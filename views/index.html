@@ -1,0 +1,59 @@
+<!-- This is a static file -->
+<!-- served from your routes in server.js -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Corona's World</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A cool thing made with Glitch" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
+    />
+    <link
+      id="favicon"
+      rel="icon"
+      href="https://cdn.glitch.com/ea1d1545-7509-4807-9ba3-ead04c193f80%2Fyakko-w_favicon.ico?v=1586377124607"
+      type="image/x-icon"
+    />
+
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+
+    <!-- import the webpage's client-side javascript file -->
+    <script src="/script.js" defer></script>
+  </head>
+  <body>
+    <section class="container">
+      <div class="video-wrap js-video-wrap">
+        <div class="video-inner">
+          <video class="video-player js-video" preload="auto">
+            <source
+              src="https://glitch.b-cdn.net/videoplayback%20(3).mp4"
+              type="video/mp4"
+            />
+            <p>Sorry, but your browser does not support this video format.</p>
+          </video>
+          <button class="action action--close js-close-video">
+            <i class="fa fa-close"></i>
+            <span class="action__label action__label--hidden"
+              >Close preview</span
+            >
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="loader">
+          <i class="fa fa-spinner fa-pulse"></i>
+        </div>
+        <button class="action action--hidden action--play js-play-video">
+          <i class="fa fa-play"></i>
+          <span class="action__label">GO YAKKO</span>
+        </button>
+      </div>
+    </section>
+  </body>
+</html>
