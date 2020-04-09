@@ -70,7 +70,7 @@ class VideoController {
   }
 
   startUpdateloop() {
-    this.loop = window.setInterval(() => this.updateByMs(), 49);
+    this.loop = window.setInterval(() => this.updateByMs(), 99);
   }
 
   endUpdateloop() {
@@ -79,9 +79,18 @@ class VideoController {
 
   updateByMs() {
     const ct = Math.floor(this.selectors.videoElement.currentTime);
-    if (ct !== this.ct) {
+    /*if (ct !== this.ct) {
       this.ct = ct;
       V.updateData("Germany", ct * 1000);
+    }*/
+    if (this.yakkodList) {
+      const entry = this.yakkodList.filter(
+        record => record.time.from >= ct && ct <= record.time.to
+      )[0];
+      if (entry && this.stallData !== entry) {
+        this.updateData(entry.country, entry.infected);
+        this.stallData = entry;
+      }
     }
   }
 
@@ -101,14 +110,14 @@ class VideoController {
 
   showVideo() {
     this.selectors.videoElement.currentTime = 0;
+    this.selectors.videoElement.playerbackRate = .89; //take a step down yo
     this.selectors.videoWrapElement.classList.remove("video-wrap--hide");
     this.selectors.videoWrapElement.classList.add("video-wrap--show");
 
     fetch("/data")
       .then(res => res.json())
       .then(json => {
-        const yakkodList = yakkoList(json);
-        console.log(yakkodList);
+        this.yakkodList = yakkoList(json);
       });
 
     setTimeout(() => this.selectors.videoElement.play(), 600);
@@ -123,14 +132,427 @@ class VideoController {
   }
 }
 
-const yakkoList = (json) =>{
+const yakkoList = json => {
   const output = [];
-  
-  for (const country of Object.values(json)) {
-        console.log(country)
+  let _congofix = 0;
+  for (const raw of Object.values(json)) {
+    switch (raw.country) {
+      case "US": {
+        output.push({
+          country: "United States",
+          infected: raw.data.confirmed,
+          time: {}
+        });
+        break;
       }
-  
-  
-}
+      case "Congo (Brazzaville)": {
+        _congofix = raw.data.confirmed;
+      }
+      case "Congo (Kinshasa)": {
+        output.push({
+          country: "Congo",
+          infected: raw.data.confirmed + _congofix,
+          time: { from: 10, to: 20 }
+        });
+        break;
+      }
+      case "Czechia": {
+        output.push({
+          country: "Czechoslovakia",
+          infected: raw.data.confirmed + _congofix,
+          time: {}
+        });
+        break;
+      }
+      case "Equatorial Guinea": {
+        output.push({
+          country: "Guinea",
+          infected: raw.data.confirmed + _congofix,
+          time: {}
+        });
+        break;
+      }
+      case "Korea, South": {
+        output.push({
+          country: "Korea",
+          infected: raw.data.confirmed + _congofix,
+          time: {}
+        });
+        break;
+      }
+      case "Papua New Guinea": {
+        output.push({
+          country: "New Guinea",
+          infected: raw.data.confirmed + _congofix,
+          time: {}
+        });
+        break;
+      }
+      case "South Sudan": {
+        output.push({
+          country: "Sudan",
+          infected: raw.data.confirmed + _congofix,
+          time: {}
+        });
+        break;
+      }
+      default: {
+        if (YAKKO_LIST.includes(raw.country))
+          output.push({
+            country: raw.country,
+            infected: raw.data.confirmed,
+            time: {}
+          });
+        else {
+          console.warn(
+            `ANOMALIE: ${raw.country} not found in YAKKO_LIST const`
+          );
+        }
+      }
+    }
+  }
+
+  for (const country of YAKKO_LIST) {
+    if (!output.find(record => record.country === country)) {
+      console.error(`ANOMALIE: ${country} not found in LIVE list!`);
+      switch (country) {
+        case "x": {
+          break;
+        }
+
+        default: {
+          output.push({ country, infected: "???", time: {} });
+        }
+      }
+    }
+  }
+
+  return output;
+};
 
 const V = new VideoController();
+
+const YAKKO_LIST = [
+  "United States",
+  "Canada",
+  "Mexico",
+  "Panama",
+  "Haiti",
+  "Jamaica",
+  "Peru",
+  "Republic",
+  "Dominican",
+  "Cuba",
+  "Caribbean",
+  "Greenland",
+  "El Salvador",
+  "Puerto Rico",
+  "Colombia",
+  "Venezuela",
+  "Honduras",
+  "Guyana",
+  "Guatemala",
+  "Bolivia",
+  "Argentina",
+  "Ecuador",
+  "Chile",
+  "Brazil",
+  "Costa Rica",
+  "Belize",
+  "Nicaragua",
+  "Bermuda",
+  "Bahamas",
+  "Tobago",
+  "San Juan",
+  "Paraguay",
+  "Uruguay",
+  "Suriname",
+  "French Guiana",
+  "Barbados",
+  "Guam",
+  "Norway",
+  "Sweden",
+  "Iceland",
+  "Finland",
+  "Germany",
+  "Switzerland",
+  "Austria",
+  "Czechoslovakia",
+  "Italy",
+  "Turkey",
+  "Greece",
+  "Poland",
+  "Romania",
+  "Scotland",
+  "Albania",
+  "Ireland",
+  "Russia",
+  "Oman",
+  "Saudi Arabia",
+  "Hungary",
+  "Cyprus",
+  "Iraq",
+  "Iran",
+  "Syria",
+  "Lebanon",
+  "Israel",
+  "Jordan",
+  "Yemens",
+  "Kuwait",
+  "Bahrain",
+  "Netherlands",
+  "Luxembourg",
+  "Belgium",
+  "Portugal",
+  "France",
+  "England",
+  "Denmark",
+  "Spain",
+  "India",
+  "Pakistan",
+  "Burma",
+  "Afghanistan",
+  "Thailand",
+  "Nepal",
+  "Bhutan",
+  "Kampuchea",
+  "Malaysia",
+  "Bangladesh",
+  "China",
+  "Korea",
+  "Japan",
+  "Mongolia",
+  "Laos",
+  "Tibet",
+  "Indonesia",
+  "Philippine Islands",
+  "Taiwan",
+  "Sri Lanka",
+  "New Guinea",
+  "Sumatra",
+  "New Zealand",
+  "Borneo",
+  "Vietnam",
+  "Tunisia",
+  "Morocco",
+  "Uganda",
+  "Angola",
+  "Zimbabwe",
+  "Djibouti",
+  "Botswana",
+  "Mozambique",
+  "Zambia",
+  "Swaziland",
+  "Gambia",
+  "Guinea",
+  "Algeria",
+  "Ghana",
+  "Burundi",
+  "Lesotho",
+  "Malawi",
+  "Togo",
+  "Niger",
+  "Nigeria",
+  "Chad",
+  "Liberia",
+  "Egypt",
+  "Benin",
+  "Gabon",
+  "Tanzania",
+  "Somalia",
+  "Kenya",
+  "Mali",
+  "Sierra Leone",
+  "Algiers",
+  "Dahomey",
+  "Namibia",
+  "Senegal",
+  "Libya",
+  "Cameroon",
+  "Congo",
+  "Zaire",
+  "Ethiopia",
+  "Guinea-Bissau",
+  "Madagascar",
+  "Rwanda",
+  "Maore",
+  "Cayman",
+  "Hong Kong",
+  "Abu Dhabi",
+  "Qatar",
+  "Yugoslavia",
+  "Crete",
+  "Mauritania",
+  "Transylvania",
+  "Monaco",
+  "Liechtenstein",
+  "Malta",
+  "Palestine",
+  "Fiji",
+  "Australia",
+  "Sudan"
+];
+
+{
+  //for debugging (manually looking for a country)
+  const YAKKO_LIST_SORTED = [
+    "Abu Dhabi",
+    "Afghanistan",
+    "Albania",
+    "Algeria",
+    "Algiers",
+    "Angola",
+    "Argentina",
+    "Australia",
+    "Austria",
+    "Bahamas",
+    "Bahrain",
+    "Bangladesh",
+    "Barbados",
+    "Belgium",
+    "Belize",
+    "Benin",
+    "Bermuda",
+    "Bhutan",
+    "Bolivia",
+    "Borneo",
+    "Botswana",
+    "Brazil",
+    "Burma",
+    "Burundi",
+    "Cameroon",
+    "Canada",
+    "Caribbean",
+    "Cayman",
+    "Chad",
+    "Chile",
+    "China",
+    "Colombia",
+    "Congo",
+    "Costa Rica",
+    "Crete",
+    "Cuba",
+    "Cyprus",
+    "Czechoslovakia",
+    "Dahomey",
+    "Denmark",
+    "Djibouti",
+    "Dominican",
+    "Ecuador",
+    "Egypt",
+    "El Salvador",
+    "England",
+    "Ethiopia",
+    "Fiji",
+    "Finland",
+    "France",
+    "French Guiana",
+    "Gabon",
+    "Gambia",
+    "Germany",
+    "Ghana",
+    "Greece",
+    "Greenland",
+    "Guam",
+    "Guatemala",
+    "Guinea",
+    "Guinea-Bissau",
+    "Guyana",
+    "Haiti",
+    "Honduras",
+    "Hong Kong",
+    "Hungary",
+    "Iceland",
+    "India",
+    "Indonesia",
+    "Iran",
+    "Iraq",
+    "Ireland",
+    "Israel",
+    "Italy",
+    "Jamaica",
+    "Japan",
+    "Jordan",
+    "Kampuchea",
+    "Kenya",
+    "Korea",
+    "Kuwait",
+    "Laos",
+    "Lebanon",
+    "Lesotho",
+    "Liberia",
+    "Libya",
+    "Liechtenstein",
+    "Luxembourg",
+    "Madagascar",
+    "Malawi",
+    "Malaysia",
+    "Mali",
+    "Malta",
+    "Maore",
+    "Mauritania",
+    "Mexico",
+    "Monaco",
+    "Mongolia",
+    "Morocco",
+    "Mozambique",
+    "Namibia",
+    "Nepal",
+    "Netherlands",
+    "New Guinea",
+    "New Zealand",
+    "Nicaragua",
+    "Niger",
+    "Nigeria",
+    "Norway",
+    "Oman",
+    "Pakistan",
+    "Palestine",
+    "Panama",
+    "Paraguay",
+    "Peru",
+    "Philippine Islands",
+    "Poland",
+    "Portugal",
+    "Puerto Rico",
+    "Qatar",
+    "Republic",
+    "Romania",
+    "Russia",
+    "Rwanda",
+    "San Juan",
+    "Saudi Arabia",
+    "Scotland",
+    "Senegal",
+    "Sierra Leone",
+    "Somalia",
+    "Spain",
+    "Sri Lanka",
+    "Sudan",
+    "Sumatra",
+    "Suriname",
+    "Swaziland",
+    "Sweden",
+    "Switzerland",
+    "Syria",
+    "Taiwan",
+    "Tanzania",
+    "Thailand",
+    "Tibet",
+    "Tobago",
+    "Togo",
+    "Transylvania",
+    "Tunisia",
+    "Turkey",
+    "Uganda",
+    "United States",
+    "Uruguay",
+    "Venezuela",
+    "Vietnam",
+    "Yemens",
+    "Yugoslavia",
+    "Zaire",
+    "Zambia",
+    "Zimbabwe"
+  ];
+}
