@@ -70,7 +70,7 @@ class VideoController {
   }
 
   startUpdateloop() {
-    this.loop = window.setInterval(() => this.updateByMs(), 99);
+    this.loop = window.setInterval(() => this.updateByMs(), 299);
   }
 
   endUpdateloop() {
@@ -78,18 +78,22 @@ class VideoController {
   }
 
   updateByMs() {
-    const ct = Math.floor(this.selectors.videoElement.currentTime);
+    const ct = Math.floor(this.selectors.videoElement.currentTime * 1000);
     /*if (ct !== this.ct) {
       this.ct = ct;
       V.updateData("Germany", ct * 1000);
     }*/
     if (this.yakkodList) {
-      const entry = this.yakkodList.filter(
-        record => record.time.from >= ct && ct <= record.time.to
-      )[0];
+      let entry = this.yakkodList.find(
+        record => record.time.from <= ct && ct <= record.time.to
+      );
       if (entry && this.stallData !== entry) {
         this.updateData(entry.country, entry.infected);
+        console.debug(
+          `Active land: ${entry.country}, t${ct} hit: ${entry.time.from}-${entry.time.to}`
+        );
         this.stallData = entry;
+        entry = void 0;
       }
     }
   }
@@ -110,7 +114,7 @@ class VideoController {
 
   showVideo() {
     this.selectors.videoElement.currentTime = 0;
-    this.selectors.videoElement.playerbackRate = .89; //take a step down yo
+    this.selectors.videoElement.playerbackRate = 0.7; //take a step down yo
     this.selectors.videoWrapElement.classList.remove("video-wrap--hide");
     this.selectors.videoWrapElement.classList.add("video-wrap--show");
 
@@ -141,7 +145,7 @@ const yakkoList = json => {
         output.push({
           country: "United States",
           infected: raw.data.confirmed,
-          time: {}
+          time: { from: 1000, to: 5000 }
         });
         break;
       }
@@ -152,7 +156,7 @@ const yakkoList = json => {
         output.push({
           country: "Congo",
           infected: raw.data.confirmed + _congofix,
-          time: { from: 10, to: 20 }
+          time: { from: 5000, to: 10000 }
         });
         break;
       }
