@@ -33,6 +33,7 @@ current {
   border: 2px solid black;
   color: white;
   font-family: Helvetica;
+  border-radius: 3rem;
 }
 current > data {
   -webkit-animation: scale-up-ver-center 0.2s
@@ -42,7 +43,7 @@ current > data {
   justify-content: space-between;
 }
 current > data svg {
-  color: dimgray !important;
+  color: darkgray !important;
 }
 .container {
   width: 100vw;
@@ -102,7 +103,7 @@ current > data svg {
 }
 .video-wrap .video-player {
   position: absolute;
-    border-radius: 5rem;
+  border-radius: 5rem;
 
   left: 0;
   top: 50%;

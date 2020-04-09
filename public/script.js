@@ -89,7 +89,7 @@ class VideoController {
         record => record.time.from <= ct && ct <= record.time.to
       );
       if (entry && this.stallData !== entry) {
-        this.updateData(entry.country, entry.infected);
+        this.updateData(entry);
         console.debug(
           `Active land: ${entry.country}, t${ct} hit: ${entry.time.from}-${entry.time.to}`
         );
@@ -99,16 +99,17 @@ class VideoController {
     }
   }
 
-  updateData(country, count) {
+  updateData(entry) {
+    $("current").style.backgroundColor = entry.color;
     $("current").innerHTML = `
       <data>
         <p id="country">
           <i class="fas fa-flag"></i>
-          ${country}
+          ${entry.country}
         </p>
         <p id="count">
           <i class="fas fa-virus"></i>
-          ${count}
+          ${entry.infected}
         </p>
       </data>`;
   }
@@ -127,7 +128,9 @@ class VideoController {
 
     setTimeout(() => this.selectors.videoElement.play(), 600);
     this.startUpdateloop();
-    V.updateData("Germany", 9000);
+    V.updateData(
+      new Entry({ country: "Germany", infected: 9000, color: "red" })
+    );
   }
 
   hideVideo() {
@@ -137,17 +140,30 @@ class VideoController {
   }
 }
 
+class Entry {
+  constructor(obj) {
+    this.country = obj.country || "-";
+    this.time = obj.time || {};
+    this.infected = obj.infected || 0;
+    this.color =
+      obj.color ||
+      getComputedStyle(document.documentElement).getPropertyValue("--bg");
+  }
+}
+
 const yakkoList = json => {
   const output = [];
   let _congofix = 0;
   for (const raw of Object.values(json)) {
     switch (raw.country) {
       case "US": {
-        output.push({
-          country: "United States",
-          infected: raw.data.confirmed,
-          time: { from: 1000, to: 5000 }
-        });
+        output.push(
+          new Entry({
+            country: "United States",
+            infected: raw.data.confirmed,
+            time: { from: 1000, to: 5000 }
+          })
+        );
         break;
       }
       case "Congo (Brazzaville)": {
