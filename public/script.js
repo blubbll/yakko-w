@@ -66,15 +66,34 @@ class VideoController {
 
   onVideoEnded() {
     this.hideVideo();
+    this.endUpdateloop();
+  }
+
+  startUpdateloop() {
+    this.loop = window.setInterval(() => this.updateByMs(), 49);
+  }
+
+  endUpdateloop() {
+    window.clearInterval(this.loop);
+  }
+
+  updateByMs() {
+    const ct = Math.floor(this.selectors.videoElement.currentTime);
+    if (ct !== this.ct) {
+      this.ct = ct;
+      V.updateData("Germany", ct * 1000);
+    }
   }
 
   updateData(country, count) {
     $("current").innerHTML = `
       <data>
         <p id="country">
+          <i class="fas fa-flag"></i>
           ${country}
         </p>
         <p id="count">
+          <i class="fas fa-virus"></i>
           ${count}
         </p>
       </data>`;
@@ -84,7 +103,17 @@ class VideoController {
     this.selectors.videoElement.currentTime = 0;
     this.selectors.videoWrapElement.classList.remove("video-wrap--hide");
     this.selectors.videoWrapElement.classList.add("video-wrap--show");
+
+    fetch("/data")
+      .then(res => res.json())
+      .then(json => {
+        const yakkodList = yakkoList(json);
+        console.log(yakkodList);
+      });
+
     setTimeout(() => this.selectors.videoElement.play(), 600);
+    this.startUpdateloop();
+    V.updateData("Germany", 9000);
   }
 
   hideVideo() {
@@ -94,6 +123,14 @@ class VideoController {
   }
 }
 
-const V = new VideoController();
+const yakkoList = (json) =>{
+  const output = [];
+  
+  for (const country of Object.values(json)) {
+        console.log(country)
+      }
+  
+  
+}
 
-V.updateData("Germany", 9000);
+const V = new VideoController();

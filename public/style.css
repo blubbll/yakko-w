@@ -14,9 +14,11 @@ body {
 }
 
 current {
+  font-size: 1.5rem;
   background: var(--bg);
   z-index: 1;
   width: 100%;
+  opacity: 0.9;
   min-width: 25vw;
   left: 50%;
   top: 40%;
@@ -28,10 +30,14 @@ current {
   font-family: Helvetica;
 }
 current > data {
--webkit-animation: scale-up-ver-center 0.2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
-	        animation: scale-up-ver-center 0.2s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+  -webkit-animation: scale-up-ver-center 0.2s
+    cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  animation: scale-up-ver-center 0.2s cubic-bezier(0.39, 0.575, 0.565, 1) both;
   display: flex;
   justify-content: space-between;
+}
+current > data svg {
+  color: dimgray !important;
 }
 .container {
   width: 100vw;
@@ -170,6 +176,11 @@ current > data {
 }
 .action:hover {
   background: var(--bg);
+  transform: scale(1.07)
+}
+.action:active {
+  background: yellow;
+  transform: scale(1.03)
 }
 .action.action--play {
   display: block;
@@ -294,20 +305,20 @@ current > data {
 @-webkit-keyframes scale-up-ver-center {
   0% {
     -webkit-transform: scaleY(0.4);
-            transform: scaleY(0.4);
+    transform: scaleY(0.4);
   }
   100% {
     -webkit-transform: scaleY(1);
-            transform: scaleY(1);
+    transform: scaleY(1);
   }
 }
 @keyframes scale-up-ver-center {
   0% {
     -webkit-transform: scaleY(0.4);
-            transform: scaleY(0.4);
+    transform: scaleY(0.4);
   }
   100% {
     -webkit-transform: scaleY(1);
-            transform: scaleY(1);
+    transform: scaleY(1);
   }
 }
