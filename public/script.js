@@ -114,7 +114,7 @@ class VideoController {
 
   showVideo() {
     this.selectors.videoElement.currentTime = 0;
-    this.selectors.videoElement.playerbackRate = 0.7; //take a step down yo
+    this.selectors.videoElement.playerbackRate = 0.5; //take a step down yo
     this.selectors.videoWrapElement.classList.remove("video-wrap--hide");
     this.selectors.videoWrapElement.classList.add("video-wrap--show");
 
