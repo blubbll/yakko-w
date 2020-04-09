@@ -48,6 +48,7 @@ class VideoController {
         this.onVideoCanPlayThrough.bind(this)
       );
     }
+    this.selectors.videoElement.load();
   }
 
   onPlayClick(event) {

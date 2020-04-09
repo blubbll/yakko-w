@@ -16,11 +16,11 @@
       type="image/x-icon"
     />
 
-    <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
+    <!-- stylesheet -->
+    <link rel="stylesheet" href="./style.css" />
 
-    <!-- import the webpage's client-side javascript file -->
-    <script src="/script.js" defer></script>
+    <!-- script -->
+    <script src="./script.js" defer></script>
   </head>
   <body>
     <section class="container">
@@ -28,7 +28,7 @@
         <div class="video-inner">
           <current> </current>
 
-          <video class="video-player js-video" preload="auto" loop>
+          <video class="video-player js-video" preload="auto" loop playsinline>
             <source
               src="https://glitch.b-cdn.net/videoplayback%20(3).mp4"
               type="video/mp4"
@@ -48,7 +48,10 @@
         <div class="loader">
           <i class="fa fa-spinner fa-pulse"></i>
         </div>
-        <button class="action action--hidden action--play js-play-video" title="start the show">
+        <button
+          class="action action--hidden action--play js-play-video"
+          title="start the show"
+        >
           <i class="fa fa-play"></i>
           <span class="action__label">GO, YAKKO!</span>
         </button>
