@@ -74,15 +74,16 @@ class VideoController {
     const _timeData = [];
     {
       let lastTime = "0:00:10:000";
+      let _i = 0;
       for (const KEY in YAKKO_MAP) {
-        const ITEM = YAKKO_MAP[KEY];
-        _timeData.push({ from: lastTime, to: KEY, nation: ITEM.nation });
+        _timeData.push({ id: _i, from: lastTime, to: KEY });
         lastTime = KEY;
+        _i++;
       }
     }
 
     this.timeData = _timeData;
-    this.loop = window.setInterval(() => this.updateByMs(), 299);
+    this.loop = window.setInterval(() => this.updateByMs(), 99);
   }
 
   endUpdateloop() {
@@ -91,18 +92,14 @@ class VideoController {
 
   updateByMs() {
     const ct = Math.floor(this.selectors.videoElement.currentTime * 1000);
-    /*if (ct !== this.ct) {
-      this.ct = ct;
-      V.updateData("Germany", ct * 1000);
-    }*/
+
     if (this.yakkodList) {
-      let entry = this.yakkodList.find(
-        record => record.time.from <= ct && ct <= record.time.to
-      );
+      let entry = this.timeData.find(td => td.from <= ct && ct <= td.to);
       if (entry && this.stallData !== entry) {
-        this.updateData(entry);
+        const current = V.yakkodList.find(x => x.nation === entry.nation);
+        this.updateData(current);
         console.debug(
-          `Active land: ${entry.country}, t${ct} hit: ${entry.time.from}-${entry.time.to}`
+          `Active land: ${current.nation}, t${ct} hit: ${entry.from}-${entry.to}`
         );
         this.stallData = entry;
         entry = void 0;
@@ -158,7 +155,6 @@ class Spot {
     this.color =
       obj.color ||
       getComputedStyle(document.documentElement).getPropertyValue("--bg");
-    this.fixed = obj.fixed || false;
   }
 }
 
@@ -171,8 +167,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "United States",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -184,8 +179,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "Congo",
-            infected: raw.data.confirmed + _congofix,
-            fixed: true
+            infected: raw.data.confirmed + _congofix
           })
         );
         break;
@@ -194,8 +188,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "Czechoslovakia",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -204,8 +197,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "Guinea",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -214,8 +206,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "Korea",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -224,8 +215,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "New Guinea",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -234,8 +224,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "Sudan",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -244,8 +233,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "Sudan",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -254,8 +242,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "Dominican",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -264,8 +251,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "Republic Dominica",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -274,8 +260,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "Palestine",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -284,8 +269,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "England",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -294,8 +278,7 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "Borneo",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
@@ -305,15 +288,12 @@ const yakkoList = json => {
         output.push(
           new Spot({
             nation: "Abu Dhabi",
-            infected: raw.data.confirmed,
-            fixed: true
+            infected: raw.data.confirmed
           })
         );
         break;
       }
 
-       
-        
       default: {
         const entry = Object.values(YAKKO_MAP).find(
           n => n.nation === raw.country
@@ -341,10 +321,7 @@ const yakkoList = json => {
   );
 
   for (const MAPDATA of Object.values(YAKKO_MAP).sort()) {
-    
-    console.log(!!output.find(r => r.nation === "Canada"))
-    const findMe = output.find(r => r.nation === MAPDATA.nation);
-    if (!findMe) {
+    if (output.find(r => r.nation === MAPDATA.nation)) {
       console.error(
         `ANOMALY: Nation "${MAPDATA.nation}" not found in LIVE list!`
       );
