@@ -312,6 +312,8 @@ const yakkoList = json => {
         break;
       }
 
+       
+        
       default: {
         const entry = Object.values(YAKKO_MAP).find(
           n => n.nation === raw.country
@@ -339,8 +341,10 @@ const yakkoList = json => {
   );
 
   for (const MAPDATA of Object.values(YAKKO_MAP).sort()) {
+    
+    console.log(!!output.find(r => r.nation === "Canada"))
     const findMe = output.find(r => r.nation === MAPDATA.nation);
-    if (!findMe || !findMe.fixed) {
+    if (!findMe) {
       console.error(
         `ANOMALY: Nation "${MAPDATA.nation}" not found in LIVE list!`
       );
