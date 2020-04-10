@@ -41,10 +41,10 @@ current > data {
     cubic-bezier(0.39, 0.575, 0.565, 1) both;
   animation: scale-up-ver-center 0.2s cubic-bezier(0.39, 0.575, 0.565, 1) both;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 current > data svg {
-  color: lime !important;
+  color: darkgray !important;
 }
 .container {
   width: 100vw;

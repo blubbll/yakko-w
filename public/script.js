@@ -28,6 +28,7 @@ class VideoController {
   constructor() {
     this.cacheSelectors();
     this.bindEvents();
+    this.oTitle = document.title;
   }
 
   cacheSelectors() {
@@ -113,6 +114,7 @@ class VideoController {
   }
 
   endUpdateloop() {
+    document.title = this.oTitle;
     window.clearInterval(this.loop);
   }
 
@@ -146,6 +148,17 @@ class VideoController {
         .color.slice(4, -1)}, .8)`;
       document.body.removeChild(d);
     }
+    {
+    if(!entry.nation.includes("$")){
+    this.titleCounter =
+      (this.titleCounter || 0) + +`${entry.infected}`.replace(/\?/g, "");
+    document.title = `infected: ${this.titleCounter}`;
+    } else switch (entry.nation){
+      case "$start":{
+        
+      } break;
+    }
+    }
     $("current").innerHTML = `
       <data>
         <p id="country">
@@ -153,8 +166,8 @@ class VideoController {
           ${entry.nation}
         </p>
         <p id="count">
-          <i class="fas fa-virus"></i>
           ${entry.infected}
+          <i class="fas fa-virus"></i>
         </p>
       </data>`;
   }
@@ -174,7 +187,7 @@ class VideoController {
     setTimeout(() => this.selectors.videoElement.play(), 600);
     this.startUpdateloop();
     V.updateData(
-      new Spot({ nation: "wait for it.", infected: 420, color: "white" })
+      new Spot({ nation: "wait for it.", color: "white" })
     );
   }
 
@@ -389,6 +402,7 @@ const V = new VideoController();
 
 //thank you gential
 const YAKKO_MAP = {
+  "0:00:00:000": { nation: "$START", color: "white" },
   "0:00:10:120": { nation: "United States", color: "green" },
   "0:00:10:550": { nation: "Canada", color: "purple" },
   "0:00:11:000": { nation: "Mexico", color: "orange" },
@@ -403,20 +417,23 @@ const YAKKO_MAP = {
   "0:00:16:050": { nation: "El Salvador", color: "purple" },
   "0:00:17:100": { nation: "Puerto Rico", color: "red" },
   "0:00:17:800": { nation: "Colombia", color: "red" },
-  "0:00:18:350": { nation: "Venezuela", color: "green" }
-  /*"Honduras",
-  "Guyana",
-  "Guatemala",
-  "Bolivia",
-  "Argentina",
-  "Ecuador", green
-  "Chile",
-  "Brazil",
-  "Costa Rica",
-  "Belize",
-  "Nicaragua",
+  "0:00:18:350": { nation: "Venezuela", color: "green" },
+  "0:00:19:200": { nation: "Honduras", color: "darkgreen" },
+  "0:00:19:600": { nation: "Guyana", color: "blue" },
+  "0:00:21:000": { nation: "Guatemala", color: "green" },
+  "0:00:21:550": { nation: "Bolivia", color: "blue" },
+  "0:00:22:150": { nation: "Argentina", color: "green" },
+  "0:00:23:000": { nation: "Ecuador", color: "green" },
+  "0:00:23:450": { nation: "Chile", color: "red" },
+  "0:00:23:850": { nation: "Brazil", color: "orange" },
+  "0:00:24:400": { nation: "Costa Rica", color: "yellow" },
+  "0:00:25:100": { nation: "Belize", color: "orange" },
+  "0:00:25:500": { nation: "Nicaragua", color: "darkgreen" },
+  "0:00:26:100": { nation: "Bermuda", color: "purple" }
+  /*"
+  ,
   "Bermuda",
-  "Bahamas",
+  "Bahamas", or
   "Tobago",
   "San Juan",
   "Paraguay",
