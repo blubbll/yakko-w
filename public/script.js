@@ -76,6 +76,7 @@ class VideoController {
   onCloseClick(event) {
     event.preventDefault();
     this.hideVideo();
+    this.endUpdateloop();
   }
 
   onVideoCanPlayThrough() {
@@ -89,7 +90,7 @@ class VideoController {
 
   startUpdateloop() {
     function _formatMe(input) {
-      const delay = -7600;
+      const delay = -7500;
       return +input.replace(/:/g, "") + delay;
     }
     const _timeData = [];
@@ -118,7 +119,7 @@ class VideoController {
   updateByMs() {
     const ct = Math.floor(this.selectors.videoElement.currentTime * 1000);
 
-    console.debug(`Ticking active nation by ms [${ct}]...`);
+    //console.debug(`Ticking active nation by ms [${ct}]...`);
 
     if (this.yakkodList) {
       let entry = this.timeData.find(td => td.from <= ct && ct <= td.to);
@@ -138,14 +139,12 @@ class VideoController {
     {
       const d = document.createElement("div");
       d.style.color = entry.color;
-      document.body.appendChild(d)
-      //Color in RGB 
-      console.log(window.getComputedStyle(d).color.slice(0,-1))
-      const newColor = hexToRgb(entry.color);
-      $(
-        "current"
-      ).style.backgroundColor = `rgba(${newColor.r},${newColor.g},${newColor.b}, .4)`;
-      console.log(`rgba(${newColor.r},${newColor.g},${newColor.b}, .4)`)
+      document.body.appendChild(d);
+
+      $("current").style.backgroundColor = `rgba(${window
+        .getComputedStyle(d)
+        .color.slice(4, -1)}, .8)`;
+      document.body.removeChild(d);
     }
     $("current").innerHTML = `
       <data>
@@ -196,6 +195,7 @@ class Spot {
   }
 }
 
+//convert list to format the maps works with
 const yakkoList = json => {
   const output = [],
     processing = [],
