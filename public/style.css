@@ -31,9 +31,10 @@ current {
   transform: translateX(-50%);
   padding: 5px 15px;
   border: 2px solid black;
-  color: white;
+  color: black;
   font-family: Helvetica;
   border-radius: 3rem;
+  backdrop-filter: blur(3rem);
 }
 current > data {
   -webkit-animation: scale-up-ver-center 0.2s
@@ -43,7 +44,7 @@ current > data {
   justify-content: space-between;
 }
 current > data svg {
-  color: darkgray !important;
+  color: lime !important;
 }
 .container {
   width: 100vw;

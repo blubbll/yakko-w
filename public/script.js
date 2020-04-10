@@ -7,6 +7,23 @@ const $$ = document.querySelectorAll.bind(document);
 //set generic
 let { app_start, route } = window;
 
+function hexToRgb(hex) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      }
+    : null;
+}
+
 class VideoController {
   constructor() {
     this.cacheSelectors();
@@ -71,14 +88,22 @@ class VideoController {
   }
 
   startUpdateloop() {
+    function _formatMe(input) {
+      const delay = -7600;
+      return +input.replace(/:/g, "") + delay;
+    }
     const _timeData = [];
     {
       let lastTime = "0:00:10:000";
-      let _i = 0;
+      let i = 0;
       for (const KEY in YAKKO_MAP) {
-        _timeData.push({ id: _i, from: lastTime, to: KEY });
+        _timeData.push({
+          id: i,
+          from: _formatMe(lastTime),
+          to: _formatMe(KEY)
+        });
         lastTime = KEY;
-        _i++;
+        i++;
       }
     }
 
@@ -93,10 +118,12 @@ class VideoController {
   updateByMs() {
     const ct = Math.floor(this.selectors.videoElement.currentTime * 1000);
 
+    console.debug(`Ticking active nation by ms [${ct}]...`);
+
     if (this.yakkodList) {
       let entry = this.timeData.find(td => td.from <= ct && ct <= td.to);
       if (entry && this.stallData !== entry) {
-        const current = V.yakkodList.find(x => x.nation === entry.nation);
+        const current = V.yakkodList[entry.id];
         this.updateData(current);
         console.debug(
           `Active land: ${current.nation}, t${ct} hit: ${entry.from}-${entry.to}`
@@ -108,12 +135,23 @@ class VideoController {
   }
 
   updateData(entry) {
-    $("current").style.backgroundColor = entry.color;
+    {
+      const d = document.createElement("div");
+      d.style.color = entry.color;
+      document.body.appendChild(d)
+      //Color in RGB 
+      console.log(window.getComputedStyle(d).color.slice(0,-1))
+      const newColor = hexToRgb(entry.color);
+      $(
+        "current"
+      ).style.backgroundColor = `rgba(${newColor.r},${newColor.g},${newColor.b}, .4)`;
+      console.log(`rgba(${newColor.r},${newColor.g},${newColor.b}, .4)`)
+    }
     $("current").innerHTML = `
       <data>
         <p id="country">
           <i class="fas fa-flag"></i>
-          ${entry.country}
+          ${entry.nation}
         </p>
         <p id="count">
           <i class="fas fa-virus"></i>
@@ -124,7 +162,7 @@ class VideoController {
 
   showVideo() {
     this.selectors.videoElement.currentTime = 0;
-    this.selectors.videoElement.playerbackRate = 0.5; //take a step down yo
+    this.selectors.videoElement.playerbackRate = 0.3; //take a step down yo
     this.selectors.videoWrapElement.classList.remove("video-wrap--hide");
     this.selectors.videoWrapElement.classList.add("video-wrap--show");
 
@@ -137,7 +175,7 @@ class VideoController {
     setTimeout(() => this.selectors.videoElement.play(), 600);
     this.startUpdateloop();
     V.updateData(
-      new Spot({ country: "Germany", infected: 9000, color: "red" })
+      new Spot({ nation: "wait for it.", infected: 420, color: "white" })
     );
   }
 
@@ -159,12 +197,14 @@ class Spot {
 }
 
 const yakkoList = json => {
-  const output = [];
+  const output = [],
+    processing = [],
+    custom = [];
   let _congofix = 0;
   for (const raw of Object.values(json)) {
     switch (raw.country) {
       case "US": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "United States",
             infected: raw.data.confirmed
@@ -176,7 +216,7 @@ const yakkoList = json => {
         _congofix = raw.data.confirmed;
       }
       case "Congo (Kinshasa)": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "Congo",
             infected: raw.data.confirmed + _congofix
@@ -185,7 +225,7 @@ const yakkoList = json => {
         break;
       }
       case "Czechia": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "Czechoslovakia",
             infected: raw.data.confirmed
@@ -194,7 +234,7 @@ const yakkoList = json => {
         break;
       }
       case "Equatorial Guinea": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "Guinea",
             infected: raw.data.confirmed
@@ -203,7 +243,7 @@ const yakkoList = json => {
         break;
       }
       case "Korea, South": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "Korea",
             infected: raw.data.confirmed
@@ -212,7 +252,7 @@ const yakkoList = json => {
         break;
       }
       case "Papua New Guinea": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "New Guinea",
             infected: raw.data.confirmed
@@ -221,7 +261,7 @@ const yakkoList = json => {
         break;
       }
       case "South Sudan": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "Sudan",
             infected: raw.data.confirmed
@@ -230,7 +270,7 @@ const yakkoList = json => {
         break;
       }
       case "Philippine Islands": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "Sudan",
             infected: raw.data.confirmed
@@ -239,7 +279,7 @@ const yakkoList = json => {
         break;
       }
       case "Dominica": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "Dominican",
             infected: raw.data.confirmed
@@ -248,7 +288,7 @@ const yakkoList = json => {
         break;
       }
       case "Dominican Republic": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "Republic Dominica",
             infected: raw.data.confirmed
@@ -257,7 +297,7 @@ const yakkoList = json => {
         break;
       }
       case "West Bank and Gaza": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "Palestine",
             infected: raw.data.confirmed
@@ -266,7 +306,7 @@ const yakkoList = json => {
         break;
       }
       case "United Kingdom": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "England",
             infected: raw.data.confirmed
@@ -275,7 +315,7 @@ const yakkoList = json => {
         break;
       }
       case "Brunei": {
-        output.push(
+        processing.push(
           new Spot({
             nation: "Borneo",
             infected: raw.data.confirmed
@@ -285,12 +325,12 @@ const yakkoList = json => {
       }
 
       case "United Arab Emirate": {
-        output.push(
-          new Spot({
-            nation: "Abu Dhabi",
-            infected: raw.data.confirmed
-          })
-        );
+        const $new = new Spot({
+          nation: "Abu Dhabi",
+          infected: raw.data.confirmed
+        });
+        alert($new);
+        custom.push(processing[$new]);
         break;
       }
 
@@ -298,8 +338,10 @@ const yakkoList = json => {
         const entry = Object.values(YAKKO_MAP).find(
           n => n.nation === raw.country
         );
-        if (entry)
-          output.push(
+        const IS_CUSTOMIZED = custom.find(x => x.nation === entry.nation);
+
+        if (entry && !IS_CUSTOMIZED)
+          processing.push(
             new Spot({
               nation: entry.nation,
               infected: raw.data.confirmed,
@@ -313,7 +355,7 @@ const yakkoList = json => {
     }
   }
 
-  output.push(
+  processing.push(
     new Spot({
       nation: "Greenland",
       infected: 0
@@ -321,21 +363,22 @@ const yakkoList = json => {
   );
 
   for (const MAPDATA of Object.values(YAKKO_MAP).sort()) {
-    if (output.find(r => r.nation === MAPDATA.nation)) {
+    const ENTRY_INORDER = processing.find(r => r.nation === MAPDATA.nation);
+    if (ENTRY_INORDER) {
+      output.push(
+        new Spot({
+          nation: ENTRY_INORDER.nation,
+          color: ENTRY_INORDER.color,
+          infected: ENTRY_INORDER.infected
+        })
+      );
+    } else {
       console.error(
         `ANOMALY: Nation "${MAPDATA.nation}" not found in LIVE list!`
       );
-      switch (MAPDATA.nation) {
-        case "x": {
-          break;
-        }
-
-        default: {
-          /* output.push(
-            new Spot({ nation: "-", color: "black", infected: "???" })
-          );*/
-        }
-      }
+      output.push(
+        new Spot({ nation: MAPDATA.nation, color: "white", infected: "???" })
+      );
     }
   }
 
