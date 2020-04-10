@@ -71,6 +71,17 @@ class VideoController {
   }
 
   startUpdateloop() {
+    const _timeData = [];
+    {
+      let lastTime = "0:00:10:000";
+      for (const KEY in YAKKO_MAP) {
+        const ITEM = YAKKO_MAP[KEY];
+        _timeData.push({ from: lastTime, to: KEY, nation: ITEM.nation });
+        lastTime = KEY;
+      }
+    }
+
+    this.timeData = _timeData;
     this.loop = window.setInterval(() => this.updateByMs(), 299);
   }
 
@@ -129,7 +140,7 @@ class VideoController {
     setTimeout(() => this.selectors.videoElement.play(), 600);
     this.startUpdateloop();
     V.updateData(
-      new Entry({ country: "Germany", infected: 9000, color: "red" })
+      new Spot({ country: "Germany", infected: 9000, color: "red" })
     );
   }
 
@@ -140,14 +151,14 @@ class VideoController {
   }
 }
 
-class Entry {
+class Spot {
   constructor(obj) {
-    this.country = obj.country || "-";
-    this.time = obj.time || {};
+    this.nation = obj.nation || "-";
     this.infected = obj.infected || 0;
     this.color =
       obj.color ||
       getComputedStyle(document.documentElement).getPropertyValue("--bg");
+    this.fixed = obj.fixed || false;
   }
 }
 
@@ -158,10 +169,10 @@ const yakkoList = json => {
     switch (raw.country) {
       case "US": {
         output.push(
-          new Entry({
-            country: "United States",
+          new Spot({
+            nation: "United States",
             infected: raw.data.confirmed,
-            time: { from: 1000, to: 5000 }
+            fixed: true
           })
         );
         break;
@@ -170,79 +181,178 @@ const yakkoList = json => {
         _congofix = raw.data.confirmed;
       }
       case "Congo (Kinshasa)": {
-        output.push({
-          country: "Congo",
-          infected: raw.data.confirmed + _congofix,
-          time: { from: 5000, to: 10000 }
-        });
+        output.push(
+          new Spot({
+            nation: "Congo",
+            infected: raw.data.confirmed + _congofix,
+            fixed: true
+          })
+        );
         break;
       }
       case "Czechia": {
-        output.push({
-          country: "Czechoslovakia",
-          infected: raw.data.confirmed + _congofix,
-          time: {}
-        });
+        output.push(
+          new Spot({
+            nation: "Czechoslovakia",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
         break;
       }
       case "Equatorial Guinea": {
-        output.push({
-          country: "Guinea",
-          infected: raw.data.confirmed + _congofix,
-          time: {}
-        });
+        output.push(
+          new Spot({
+            nation: "Guinea",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
         break;
       }
       case "Korea, South": {
-        output.push({
-          country: "Korea",
-          infected: raw.data.confirmed + _congofix,
-          time: {}
-        });
+        output.push(
+          new Spot({
+            nation: "Korea",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
         break;
       }
       case "Papua New Guinea": {
-        output.push({
-          country: "New Guinea",
-          infected: raw.data.confirmed + _congofix,
-          time: {}
-        });
+        output.push(
+          new Spot({
+            nation: "New Guinea",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
         break;
       }
       case "South Sudan": {
-        output.push({
-          country: "Sudan",
-          infected: raw.data.confirmed + _congofix,
-          time: {}
-        });
+        output.push(
+          new Spot({
+            nation: "Sudan",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
         break;
       }
-      default: {
-        if (YAKKO_LIST.includes(raw.country))
-          output.push({
-            country: raw.country,
+      case "Philippine Islands": {
+        output.push(
+          new Spot({
+            nation: "Sudan",
             infected: raw.data.confirmed,
-            time: {}
-          });
-        else {
-          console.warn(
-            `ANOMALIE: ${raw.country} not found in YAKKO_LIST const`
+            fixed: true
+          })
+        );
+        break;
+      }
+      case "Dominica": {
+        output.push(
+          new Spot({
+            nation: "Dominican",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
+        break;
+      }
+      case "Dominican Republic": {
+        output.push(
+          new Spot({
+            nation: "Republic Dominica",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
+        break;
+      }
+      case "West Bank and Gaza": {
+        output.push(
+          new Spot({
+            nation: "Palestine",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
+        break;
+      }
+      case "United Kingdom": {
+        output.push(
+          new Spot({
+            nation: "England",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
+        break;
+      }
+      case "Brunei": {
+        output.push(
+          new Spot({
+            nation: "Borneo",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
+        break;
+      }
+
+      case "United Arab Emirate": {
+        output.push(
+          new Spot({
+            nation: "Abu Dhabi",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
+        break;
+      }
+
+      default: {
+        const entry = Object.values(YAKKO_MAP).find(
+          n => n.nation === raw.country
+        );
+        if (entry)
+          output.push(
+            new Spot({
+              nation: entry.nation,
+              infected: raw.data.confirmed,
+              color: entry.color
+            })
           );
+        else {
+          console.warn(`ANOMALY: ${raw.country} not found in YAKKO_NATIONS!`);
         }
       }
     }
   }
 
-  for (const country of YAKKO_LIST) {
-    if (!output.find(record => record.country === country)) {
-      console.error(`ANOMALIE: ${country} not found in LIVE list!`);
-      switch (country) {
+  output.push(
+    new Spot({
+      nation: "Greenland",
+      infected: 0
+    })
+  );
+
+  for (const MAPDATA of Object.values(YAKKO_MAP).sort()) {
+    const findMe = output.find(r => r.nation === MAPDATA.nation);
+    if (!findMe || !findMe.fixed) {
+      console.error(
+        `ANOMALY: Nation "${MAPDATA.nation}" not found in LIVE list!`
+      );
+      switch (MAPDATA.nation) {
         case "x": {
           break;
         }
 
         default: {
-          output.push({ country, infected: "???", time: {} });
+          /* output.push(
+            new Spot({ nation: "-", color: "black", infected: "???" })
+          );*/
         }
       }
     }
@@ -253,29 +363,29 @@ const yakkoList = json => {
 
 const V = new VideoController();
 
-const YAKKO_LIST = [
-  "United States",
-  "Canada",
-  "Mexico",
-  "Panama",
-  "Haiti",
-  "Jamaica",
-  "Peru",
-  "Republic",
-  "Dominican",
-  "Cuba",
-  "Caribbean",
-  "Greenland",
-  "El Salvador",
-  "Puerto Rico",
-  "Colombia",
-  "Venezuela",
-  "Honduras",
+//thank you gential
+const YAKKO_MAP = {
+  "0:00:10:120": { nation: "United States", color: "green" },
+  "0:00:10:550": { nation: "Canada", color: "purple" },
+  "0:00:11:000": { nation: "Mexico", color: "orange" },
+  "0:00:11:400": { nation: "Panama", color: "green" },
+  "0:00:11:950": { nation: "Haiti", color: "red" },
+  "0:00:12:350": { nation: "Jamaica", color: "red" },
+  "0:00:12:750": { nation: "Peru", color: "yellow" },
+  "0:00:13:600": { nation: "Republic Dominica", color: "red" },
+  "0:00:14:500": { nation: "Cuba", color: "red" },
+  "0:00:15:000": { nation: "Caribbean" },
+  "0:00:15:550": { nation: "Greenland", color: "green" },
+  "0:00:16:050": { nation: "El Salvador", color: "purple" },
+  "0:00:17:100": { nation: "Puerto Rico", color: "red" },
+  "0:00:17:800": { nation: "Colombia", color: "red" },
+  "0:00:18:350": { nation: "Venezuela", color: "green" }
+  /*"Honduras",
   "Guyana",
   "Guatemala",
   "Bolivia",
   "Argentina",
-  "Ecuador",
+  "Ecuador", green
   "Chile",
   "Brazil",
   "Costa Rica",
@@ -411,8 +521,8 @@ const YAKKO_LIST = [
   "Palestine",
   "Fiji",
   "Australia",
-  "Sudan"
-];
+  "Sudan"*/
+};
 
 {
   //for debugging (manually looking for a country)
