@@ -103,11 +103,15 @@ class VideoController {
     }
     const _timeData = [];
     {
+      let _infecTotal = 0;
       for (const KEY in YAKKO_MAP) {
         const _next = format(Object.keys(YAKKO_MAP)[i + 1] || "1:00:00:000");
 
+        //count up total infected for time progress point
+        _infecTotal += this.yakkodList[i].infected;
         _timeData.push({
           id: i,
+          infecTotal: _infecTotal,
           from: format(KEY) - (_preDelay - this.delay),
           to: _next - (_preDelay - this.delay)
         });
@@ -125,29 +129,35 @@ class VideoController {
     window.clearInterval(this.loop);
   }
 
+  updateTime(perc){
+    $("video").currentTime = perc / 100 * $("video").duration
+  }
+  
   updateByMs() {
     const ct = Math.floor(this.selectors.videoElement.currentTime * 1000);
 
+    $("#proc").value= $("video").currentTime * 100 / $("video").duration
+    
     //console.debug(`Ticking active nation by ms [${ct}]...`);
 
     if (this.yakkodList) {
       let entry = this.timeData.find(td => td.from <= ct && ct <= td.to);
       if (entry && this.stallData !== entry) {
-        const current = V.yakkodList[entry.id];
-        this.updateData(current);
-        console.debug(
-          `Active land: ${current.nation}, t${ct} hit: ${entry.from}-${entry.to}`
-        );
+        const current = this.yakkodList[entry.id];
+        this.updateData(current, entry);
+        /*console.debug(
+          `Active nation: ${current.nation}, t${ct} hit: ${entry.from}-${entry.to}`
+        );*/
         this.stallData = entry;
         entry = void 0;
       }
     }
   }
 
-  updateData(entry) {
+  updateData(current, entry) {
     {
       const d = document.createElement("div");
-      d.style.color = entry.color;
+      d.style.color = current.color;
       document.body.appendChild(d);
 
       $("current").style.backgroundColor = `rgba(${window
@@ -156,19 +166,16 @@ class VideoController {
       document.body.removeChild(d);
     }
 
-    let NATION_TEXT = entry.nation,
-      NATION_INFECTED = entry.infected;
-    switch (entry.nation) {
+    let NATION_TEXT = current.nation,
+      NATION_INFECTED = current.infected;
+    switch (current.nation) {
       case "$START":
         {
-          this.titleCounter = 0;
           NATION_TEXT = "Wait for it...";
         }
         break;
       default: {
-        this.titleCounter =
-          (this.titleCounter || 0) + +`${entry.infected}`.replace(/\?/g, "");
-        document.title = `infected: ${this.titleCounter}`;
+        document.title = `infected: ${entry.infecTotal}`;
       }
     }
 
@@ -194,12 +201,11 @@ class VideoController {
     fetch("/data")
       .then(res => res.json())
       .then(json => {
-        this.yakkodList = yakkoList(json);
+        this.yakkodList = makeYakkoList(json);
+        this.startUpdateloop();
+        V.updateData(new Spot({ nation: "$START", color: "black" }));
+        setTimeout(() => this.selectors.videoElement.play(), 0);
       });
-
-    setTimeout(() => this.selectors.videoElement.play(), 600);
-    this.startUpdateloop();
-    V.updateData(new Spot({ nation: "$START", color: "white" }));
   }
 
   hideVideo() {
@@ -213,17 +219,25 @@ class Spot {
   constructor(obj) {
     this.nation = obj.nation || "-";
     this.infected = obj.infected || 0;
-    this.color =
-      obj.color ||
-      getComputedStyle(document.documentElement).getPropertyValue("--bg");
+    //inherit data like color from yakkolist
+    const INHERITED_DATA = Object.values(YAKKO_MAP).find(
+      n => n.nation === this.nation
+    );
+
+    this.color = !INHERITED_DATA
+      ? obj.color ||
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--bg")
+          .replace(/ /g, "")
+      : INHERITED_DATA.color;
+    this.fixed = obj.fixed || false;
   }
 }
 
 //convert list to format the maps works with
-const yakkoList = json => {
+const makeYakkoList = json => {
   const output = [],
-    processing = [],
-    custom = [];
+    processing = [];
   let _congofix = 0;
   for (const raw of Object.values(json)) {
     switch (raw.country) {
@@ -231,19 +245,22 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "United States",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
       }
       case "Congo (Brazzaville)": {
         _congofix = raw.data.confirmed;
+        break;
       }
       case "Congo (Kinshasa)": {
         processing.push(
           new Spot({
             nation: "Congo",
-            infected: raw.data.confirmed + _congofix
+            infected: raw.data.confirmed + _congofix,
+            fixed: true
           })
         );
         break;
@@ -252,7 +269,8 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "Czechoslovakia",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
@@ -261,7 +279,8 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "Guinea",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
@@ -270,7 +289,8 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "Korea",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
@@ -279,7 +299,8 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "New Guinea",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
@@ -288,7 +309,8 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "Sudan",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
@@ -297,7 +319,8 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "Sudan",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
@@ -306,7 +329,8 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "Dominican",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
@@ -315,7 +339,8 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "Republic Dominica",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
@@ -324,7 +349,8 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "Palestine",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
@@ -333,7 +359,8 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "England",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
@@ -342,29 +369,33 @@ const yakkoList = json => {
         processing.push(
           new Spot({
             nation: "Borneo",
-            infected: raw.data.confirmed
+            infected: raw.data.confirmed,
+            fixed: true
           })
         );
         break;
       }
 
       case "United Arab Emirate": {
-        const $new = new Spot({
-          nation: "Abu Dhabi",
-          infected: raw.data.confirmed
-        });
-        alert($new);
-        custom.push(processing[$new]);
+        processing.push(
+          new Spot({
+            nation: "Abu Dhabi",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
         break;
       }
 
       default: {
-        const entry = Object.values(YAKKO_MAP).find(
-          n => n.nation === raw.country
-        );
-        const IS_CUSTOMIZED = custom.find(x => x.nation === entry.nation);
+        const entry =
+          Object.values(YAKKO_MAP).find(n => n.nation === raw.country) || {};
 
-        if (entry && !IS_CUSTOMIZED)
+        entry.wasFixed = processing.find(
+          n => n.nation === raw.country && n.fixed === true
+        );
+
+        if (entry !== {} && !entry.wasFixed)
           processing.push(
             new Spot({
               nation: entry.nation,
@@ -382,7 +413,8 @@ const yakkoList = json => {
   processing.push(
     new Spot({
       nation: "Greenland",
-      infected: 0
+      infected: 0,
+      fixed: true
     })
   );
 
