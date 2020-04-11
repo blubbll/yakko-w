@@ -194,7 +194,7 @@ class VideoController {
 
       $("current").style.backgroundColor = `rgba(${window
         .getComputedStyle(d)
-        .color.slice(4, -1)}, .8)`;
+        .color.slice(4, -1)}, .85)`;
       document.body.removeChild(d);
     }
 
@@ -211,6 +211,7 @@ class VideoController {
       }
     }
 
+    //update displayed HTML
     $("current").innerHTML = `
       <data>
         <p id="country">
@@ -239,6 +240,7 @@ class VideoController {
       ? fetch("/data")
           .then(res => res.json())
           .then(json => {
+            //transient list to convert real data to yakko format
             this.yakkodList = makeYakkoList(json);
             done();
           })
@@ -262,12 +264,14 @@ class Spot {
       n => n.nation === this.nation
     );
 
-    this.color = !INHERITED_DATA
-      ? obj.color ||
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--bg")
-          .replace(/ /g, "")
-      : INHERITED_DATA.color;
+    this.color =
+      INHERITED_DATA && INHERITED_DATA.color
+        ? INHERITED_DATA.color
+        : obj.color ||
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--bg")
+            .replace(/ /g, "");
+
     this.fixed = obj.fixed || false;
   }
 }
@@ -467,7 +471,7 @@ const makeYakkoList = json => {
         })
       );
     } else {
-      console.error(
+      console.warn(
         `ANOMALY: Nation "${MAPDATA.nation}" not found in LIVE list!`
       );
       output.push(new Spot({ nation: MAPDATA.nation }));
@@ -479,7 +483,7 @@ const makeYakkoList = json => {
 
 const V = new VideoController();
 
-//thank you gential
+//Mapped data from original Video, thank you gential
 const YAKKO_MAP = {
   "0:00:10:120": { nation: "United States", color: "green" },
   "0:00:10:550": { nation: "Canada", color: "purple" },
@@ -507,13 +511,12 @@ const YAKKO_MAP = {
   "0:00:24:400": { nation: "Costa Rica", color: "yellow" },
   "0:00:25:100": { nation: "Belize", color: "orange" },
   "0:00:25:500": { nation: "Nicaragua", color: "darkgreen" },
-  "0:00:26:100": { nation: "Bermuda", color: "purple" }
+  "0:00:26:100": { nation: "Bermuda", color: "purple" },
+  "0:00:26:600": { nation: "Bahamas", color: "orange" },
+  "0:00:27:100": { nation: "Tobago", color: "purple" },
+  "0:00:27:550": { nation: "San Juan" } //no color on yakkos map here
   /*"
   ,
-  "Bermuda",
-  "Bahamas", or
-  "Tobago",
-  "San Juan",
   "Paraguay",
   "Uruguay",
   "Suriname",
