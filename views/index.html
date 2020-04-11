@@ -35,15 +35,28 @@
             />
             <p>Sorry, but your browser does not support this video format.</p>
           </video>
+
           <button class="action action--close js-close-video" title="close">
             <i class="fa fa-times"></i>
-            <span class="action__label action__label--hidden"
-              >Close preview</span
-            >
           </button>
+
+          <button class="action action--pp js-pp-video" title="pause">
+            <i class="fa fa-play" ></i>
+            <i class="fa fa-pause" ></i>
+          </button>
+
+          <static></static>
           
-             <input id="proc" type="range" min="0" max="100" step="1" value="0" oninput="V.updateTime(this.value)" class="slider">
-          
+          <input
+            id="proc"
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            value="0"
+            oninput="V.updateTime(this.value)"
+            class="slider"
+          />
         </div>
       </div>
 

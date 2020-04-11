@@ -39,15 +39,14 @@ class VideoController {
 
   cacheSelectors() {
     this.selectors = {};
-    this.selectors.bodyElement = document.querySelector("body");
-    this.selectors.videoWrapElement = document.querySelector(".js-video-wrap");
+    this.selectors.bodyElement = $("body");
+    this.selectors.videoWrapElement = $(".js-video-wrap");
     this.selectors.videoElement = this.selectors.videoWrapElement.querySelector(
       ".js-video"
     );
-    this.selectors.playButtonElement = document.querySelector(".js-play-video");
-    this.selectors.closeButtonElement = document.querySelector(
-      ".js-close-video"
-    );
+    this.selectors.playButtonElement = $(".js-play-video");
+    this.selectors.closeButtonElement = $(".js-close-video");
+    this.selectors.ppButtonElement = $(".js-pp-video");
   }
 
   bindEvents() {
@@ -58,6 +57,10 @@ class VideoController {
     this.selectors.closeButtonElement.addEventListener(
       "click",
       this.onCloseClick.bind(this)
+    );
+    this.selectors.ppButtonElement.addEventListener(
+      "click",
+      this.onPPClick.bind(this)
     );
     this.selectors.videoElement.addEventListener(
       "ended",
@@ -78,6 +81,31 @@ class VideoController {
   onPlayClick(event) {
     event.preventDefault();
     this.showVideo();
+  }
+
+  onPPClick(event) {
+    if (
+      (event.type === "open" && !this.selectors.videoElement.paused) ||
+      !this.selectors.videoElement.paused
+    ) {
+      this.selectors.videoElement.pause();
+      this.selectors.ppButtonElement.querySelector(
+        "svg.fa-play"
+      ).style.display = "inline-block";
+      this.selectors.ppButtonElement.querySelector(
+        "svg.fa-pause"
+      ).style.display = "none";
+      this.selectors.ppButtonElement.title = "play";
+    } else {
+      if (event.type !== "close") this.selectors.videoElement.play();
+      this.selectors.ppButtonElement.querySelector(
+        "svg.fa-play"
+      ).style.display = "none";
+      this.selectors.ppButtonElement.querySelector(
+        "svg.fa-pause"
+      ).style.display = "inline-block";
+      this.selectors.ppButtonElement.title = "pause";
+    }
   }
 
   onCloseClick(event) {
@@ -101,8 +129,9 @@ class VideoController {
     function format(input) {
       return +input.replace(/:/g, "");
     }
-    const _timeData = [];
-    {
+
+    if (!this.timeData) {
+      const _timeData = [];
       let _infecTotal = 0;
       for (const KEY in YAKKO_MAP) {
         const _next = format(Object.keys(YAKKO_MAP)[i + 1] || "1:00:00:000");
@@ -118,9 +147,9 @@ class VideoController {
 
         i++;
       }
+      this.timeData = _timeData;
     }
 
-    this.timeData = _timeData;
     this.loop = window.setInterval(() => this.updateByMs(), 99);
   }
 
@@ -129,15 +158,18 @@ class VideoController {
     window.clearInterval(this.loop);
   }
 
-  updateTime(perc){
-    $("video").currentTime = perc / 100 * $("video").duration
+  updateTime(perc) {
+    this.selectors.videoElement.currentTime =
+      (perc / 100) * this.selectors.videoElement.duration;
   }
-  
+
   updateByMs() {
     const ct = Math.floor(this.selectors.videoElement.currentTime * 1000);
 
-    $("#proc").value= $("video").currentTime * 100 / $("video").duration
-    
+    $("#proc").value =
+      (this.selectors.videoElement.currentTime * 100) /
+      this.selectors.videoElement.duration;
+
     //console.debug(`Ticking active nation by ms [${ct}]...`);
 
     if (this.yakkodList) {
@@ -198,20 +230,27 @@ class VideoController {
     this.selectors.videoWrapElement.classList.remove("video-wrap--hide");
     this.selectors.videoWrapElement.classList.add("video-wrap--show");
 
-    fetch("/data")
-      .then(res => res.json())
-      .then(json => {
-        this.yakkodList = makeYakkoList(json);
-        this.startUpdateloop();
-        V.updateData(new Spot({ nation: "$START", color: "black" }));
-        setTimeout(() => this.selectors.videoElement.play(), 0);
-      });
+    const done = () => {
+      this.startUpdateloop();
+      this.updateData(new Spot({ nation: "$START", color: "black" }));
+      setTimeout(() => this.selectors.videoElement.play(), 0);
+      this.onPPClick({ type: "open" });
+    };
+    !this.yakkodList
+      ? fetch("/data")
+          .then(res => res.json())
+          .then(json => {
+            this.yakkodList = makeYakkoList(json);
+            done();
+          })
+      : done();
   }
 
   hideVideo() {
     this.selectors.videoWrapElement.classList.remove("video-wrap--show");
     this.selectors.videoWrapElement.classList.add("video-wrap--hide");
     this.selectors.videoElement.pause();
+    this.onPPClick({ type: "close" });
   }
 }
 
