@@ -35,6 +35,7 @@ current {
   font-family: Helvetica;
   border-radius: 3rem;
   backdrop-filter: blur(3rem);
+  -webkit-backdrop-filter: blur(3rem);
 }
 current > data {
   -webkit-animation: scale-up-ver-center 0.2s
@@ -211,6 +212,7 @@ current > data svg {
 .action.action--close {
   background: var(--bg);
   backdrop-filter: blur(3rem);
+  -webkit-backdrop-filter: blur(3rem);
   position: absolute;
   z-index: 1000;
   top: 30px;

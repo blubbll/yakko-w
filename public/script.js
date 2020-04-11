@@ -24,11 +24,17 @@ function hexToRgb(hex) {
     : null;
 }
 
+/*setTimeout(() => {
+  V.startUpdateloop();
+  console.log(V.timeData);
+});
+*/
 class VideoController {
   constructor() {
     this.cacheSelectors();
     this.bindEvents();
     this.oTitle = document.title;
+    this.delay = 2100;
   }
 
   cacheSelectors() {
@@ -90,21 +96,22 @@ class VideoController {
   }
 
   startUpdateloop() {
-    function _formatMe(input) {
-      const delay = -7500;
-      return +input.replace(/:/g, "") + delay;
+    let i = 0;
+    const _preDelay = format("0:00:10:120");
+    function format(input) {
+      return +input.replace(/:/g, "");
     }
     const _timeData = [];
     {
-      let lastTime = "0:00:10:000";
-      let i = 0;
       for (const KEY in YAKKO_MAP) {
+        const _next = format(Object.keys(YAKKO_MAP)[i + 1] || "1:00:00:000");
+
         _timeData.push({
           id: i,
-          from: _formatMe(lastTime),
-          to: _formatMe(KEY)
+          from: format(KEY) - (_preDelay - this.delay),
+          to: _next - (_preDelay - this.delay)
         });
-        lastTime = KEY;
+
         i++;
       }
     }
@@ -148,25 +155,31 @@ class VideoController {
         .color.slice(4, -1)}, .8)`;
       document.body.removeChild(d);
     }
-    {
-    if(!entry.nation.includes("$")){
-    this.titleCounter =
-      (this.titleCounter || 0) + +`${entry.infected}`.replace(/\?/g, "");
-    document.title = `infected: ${this.titleCounter}`;
-    } else switch (entry.nation){
-      case "$start":{
-        
-      } break;
+
+    let NATION_TEXT = entry.nation,
+      NATION_INFECTED = entry.infected;
+    switch (entry.nation) {
+      case "$START":
+        {
+          this.titleCounter = 0;
+          NATION_TEXT = "Wait for it...";
+        }
+        break;
+      default: {
+        this.titleCounter =
+          (this.titleCounter || 0) + +`${entry.infected}`.replace(/\?/g, "");
+        document.title = `infected: ${this.titleCounter}`;
+      }
     }
-    }
+
     $("current").innerHTML = `
       <data>
         <p id="country">
           <i class="fas fa-flag"></i>
-          ${entry.nation}
+          ${NATION_TEXT}
         </p>
         <p id="count">
-          ${entry.infected}
+          ${NATION_INFECTED}
           <i class="fas fa-virus"></i>
         </p>
       </data>`;
@@ -186,9 +199,7 @@ class VideoController {
 
     setTimeout(() => this.selectors.videoElement.play(), 600);
     this.startUpdateloop();
-    V.updateData(
-      new Spot({ nation: "wait for it.", color: "white" })
-    );
+    V.updateData(new Spot({ nation: "$START", color: "white" }));
   }
 
   hideVideo() {
@@ -389,9 +400,7 @@ const yakkoList = json => {
       console.error(
         `ANOMALY: Nation "${MAPDATA.nation}" not found in LIVE list!`
       );
-      output.push(
-        new Spot({ nation: MAPDATA.nation, color: "white", infected: "???" })
-      );
+      output.push(new Spot({ nation: MAPDATA.nation }));
     }
   }
 
@@ -402,7 +411,6 @@ const V = new VideoController();
 
 //thank you gential
 const YAKKO_MAP = {
-  "0:00:00:000": { nation: "$START", color: "white" },
   "0:00:10:120": { nation: "United States", color: "green" },
   "0:00:10:550": { nation: "Canada", color: "purple" },
   "0:00:11:000": { nation: "Mexico", color: "orange" },
