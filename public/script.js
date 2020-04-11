@@ -150,7 +150,7 @@ class VideoController {
       this.timeData = _timeData;
     }
 
-    this.loop = window.setInterval(() => this.updateByMs(), 99);
+    this.loop = window.setInterval(() => this.updateByMs(), 119);
   }
 
   endUpdateloop() {
@@ -233,7 +233,6 @@ class VideoController {
     const done = () => {
       this.startUpdateloop();
       this.updateData(new Spot({ nation: "$START", color: "black" }));
-      setTimeout(() => this.selectors.videoElement.play(), 0);
       this.onPPClick({ type: "open" });
     };
     !this.yakkodList
@@ -249,7 +248,7 @@ class VideoController {
   hideVideo() {
     this.selectors.videoWrapElement.classList.remove("video-wrap--show");
     this.selectors.videoWrapElement.classList.add("video-wrap--hide");
-    this.selectors.videoElement.pause();
+    setTimeout(this.selectors.videoElement.pause);
     this.onPPClick({ type: "close" });
   }
 }
