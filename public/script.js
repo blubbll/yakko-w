@@ -47,6 +47,7 @@ class VideoController {
     this.selectors.playButtonElement = $(".js-play-video");
     this.selectors.closeButtonElement = $(".js-close-video");
     this.selectors.ppButtonElement = $(".js-pp-video");
+    this.selectors.speedDDInsideElement = $("ul.content");
   }
 
   bindEvents() {
@@ -65,6 +66,16 @@ class VideoController {
     this.selectors.videoElement.addEventListener(
       "ended",
       this.onVideoEnded.bind(this)
+    );
+
+    this.selectors.bodyElement.addEventListener(
+      "click",
+      this.onBodyClick.bind(this)
+    );
+
+    this.selectors.speedDDInsideElement.addEventListener(
+      "click",
+      this.onSpeedDDClick.bind(this)
     );
 
     if (this.selectors.videoElement.readyState === 4) {
@@ -121,6 +132,16 @@ class VideoController {
   onVideoEnded() {
     this.hideVideo();
     this.endUpdateloop();
+  }
+
+  onSpeedDDClick(event) {
+    this.selectors.videoElement.playbackRate = +event.target.innerText.split("%")[0]/100;
+  }
+
+  onBodyClick(event) {
+    //close speed-checkbox if click was outside
+    if (event.target.parentElement === this.selectors.speedDDInsideElement)
+      $("#drop").checked = false;
   }
 
   startUpdateloop() {
@@ -182,6 +203,13 @@ class VideoController {
         );*/
         this.stallData = entry;
         entry = void 0;
+      } else if (
+        !this.stallData ||
+        (this.stallData.nation !== "$START" && ct <= this.timeData[0].from)
+      ) {
+        const entry = new Spot({ nation: "$START", color: "black" });
+        this.updateData(entry);
+        this.stallData = entry;
       }
     }
   }
@@ -227,13 +255,12 @@ class VideoController {
 
   showVideo() {
     this.selectors.videoElement.currentTime = 0;
-    this.selectors.videoElement.playerbackRate = 0.3; //take a step down yo
+    this.selectors.videoElement.playbackRate = 0.9; //take a step down yo
     this.selectors.videoWrapElement.classList.remove("video-wrap--hide");
     this.selectors.videoWrapElement.classList.add("video-wrap--show");
 
     const done = () => {
       this.startUpdateloop();
-      this.updateData(new Spot({ nation: "$START", color: "black" }));
       this.onPPClick({ type: "open" });
     };
     !this.yakkodList
@@ -264,13 +291,21 @@ class Spot {
       n => n.nation === this.nation
     );
 
-    this.color =
-      INHERITED_DATA && INHERITED_DATA.color
-        ? INHERITED_DATA.color
-        : obj.color ||
-          getComputedStyle(document.documentElement)
-            .getPropertyValue("--bg")
-            .replace(/ /g, "");
+    switch (obj.color) {
+      case "yellow": {
+        this.color = "gold";
+        break;
+      }
+      default: {
+        this.color =
+          INHERITED_DATA && INHERITED_DATA.color
+            ? INHERITED_DATA.color
+            : obj.color ||
+              getComputedStyle(document.documentElement)
+                .getPropertyValue("--bg")
+                .replace(/ /g, "");
+      }
+    }
 
     this.fixed = obj.fixed || false;
   }

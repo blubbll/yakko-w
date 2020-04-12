@@ -19,7 +19,7 @@ body {
 }
 
 current {
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   background: var(--bg);
   z-index: 1;
   width: 100%;
@@ -140,14 +140,17 @@ current > data svg {
 
 @media screen and (min-width: 400px) {
   current {
-    top: 6.6% !important;
-    left: 50% !important;
+    font-size: 2rem;
+    top: 35px;
+    left: 44%;
     /* transform: translate(-50%, -50%); */
-    width: 50vh;
+    width: 80%;
   }
+  
+
 
   .slider {
-    right: 20%;
+    right: 25%;
   }
   .video-wrap .video-inner {
     width: 3vw;
@@ -440,4 +443,80 @@ static {
     -webkit-transform: scaleY(1);
     transform: scaleY(1);
   }
+}
+
+
+.dropdown-container {
+    width: 130px;
+    border-radius: 3px;
+    padding: 0 10px;
+    min-height: 50px;
+    text-align: center;
+    position: absolute;
+    right: 32px;
+        bottom: 42%;
+}
+.dropdown-container ul {
+  list-style-type: none;
+  padding: 0;
+}
+.dropdown-container label {
+  position: relative;
+  display: block;
+  width: 100%;
+  line-height: 50px;
+  cursor: pointer;
+  background: var(--bg);
+  border-radius: 1rem;
+  border: .1rem solid black;
+  color: black;
+  user-select: none;
+  padding-right: 10px;
+}
+.dropdown-container label:hover {
+  background: white;
+}
+.dropdown-container label:after {
+  content: "›";
+  position: absolute;
+  width: 40px;
+  font-size: 32px;
+  right: 0;
+  padding-left: 0px;
+  top: 0;
+  bottom: 0;
+  transform: rotate(90deg);
+}
+.dropdown-container .content {
+  height: 0;
+  max-height: 0px;
+  margin: 0;
+  text-align: left;
+  overflow: hidden;
+  transition: 0.3s linear;
+  position: absolute;
+  z-index: 999;
+  background: #fff;
+}
+.dropdown-container .content li {
+  padding: 3px 10px;
+}
+.dropdown-container .content li:hover{
+  background: yellow;
+}
+.dropdown-container .content li:first-child {
+  padding-top: 10px;
+}
+.dropdown-container .content li:last-child {
+  padding-bottom: 10px;
+}
+.dropdown-container #drop {
+  display: none;
+}
+.dropdown-container #drop:checked ~ .content {
+  height: auto;
+  width: 100%;
+  max-height: 900px;
+  transition: max-height 1s ease-in;
+  overflow: hidden;
 }
