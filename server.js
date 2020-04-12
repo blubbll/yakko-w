@@ -10,6 +10,10 @@ app.get("/", (req, res) => {
   res.sendFile(`${__dirname}/views/index.html`);
 });
 
+app.get("/t", (req, res) => {
+  res.sendFile(`${__dirname}/views/t.html`);
+});
+
 let world = [];
 
 const update = () => {

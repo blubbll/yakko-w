@@ -34,7 +34,7 @@ class VideoController {
     this.cacheSelectors();
     this.bindEvents();
     this.oTitle = document.title;
-    this.delay = 2100;
+    this.delay = 3500;
   }
 
   cacheSelectors() {
@@ -258,17 +258,14 @@ class VideoController {
     }
 
     //update displayed HTML
-    $("current").innerHTML = `
-      <data>
-        <p id="country">
-          <i class="fas fa-flag"></i>
-          ${NATION_TEXT}
-        </p>
-        <p id="count">
-          ${NATION_INFECTED}
-          <i class="fas fa-virus"></i>
-        </p>
-      </data>`;
+    $("current>#country>live").innerHTML = `
+      <p>
+        ${NATION_TEXT}
+      </p>`;
+    $("current>#count>live").innerHTML = `
+      <p>
+       ${NATION_INFECTED}
+     </p>`;
   }
 
   showVideo() {
