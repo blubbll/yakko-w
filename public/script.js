@@ -211,6 +211,8 @@ class VideoController {
 
     if (this.yakkodList) {
       let entry = this.timeData.find(td => td.from <= ct && ct <= td.to);
+      
+      
       if (entry && this.stallData !== entry) {
         const current = this.yakkodList[entry.id];
         this.updateData(current, entry);
@@ -308,7 +310,7 @@ class Spot {
     );
 
     switch (obj.color) {
-      case "yellow": {
+      case "gold": case"yellow": {
         this.color = "gold";
         break;
       }
