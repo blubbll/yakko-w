@@ -47,6 +47,7 @@ class VideoController {
     this.selectors.playButtonElement = $(".js-play-video");
     this.selectors.closeButtonElement = $(".js-close-video");
     this.selectors.ppButtonElement = $(".js-pp-video");
+    this.selectors.speedDDElement = $(".dropdown-container");
     this.selectors.speedDDInsideElement = $("ul.content");
   }
 
@@ -135,12 +136,27 @@ class VideoController {
   }
 
   onSpeedDDClick(event) {
-    this.selectors.videoElement.playbackRate = +event.target.innerText.split("%")[0]/100;
+    this.selectors.videoElement.playbackRate = +event.target.getAttribute(
+      "data-val"
+    )||this.selectors.videoElement.playbackRate;
   }
 
   onBodyClick(event) {
+    if (event.target === $("#drop")) {
+      for (const speed of this.selectors.speedDDInsideElement.querySelectorAll(
+        "li"
+      )) {
+        speed.setAttribute(
+          "active",
+          +speed.getAttribute("data-val") ===
+            this.selectors.videoElement.playbackRate
+            ? "true"
+            : "false"
+        );
+      }
+    }
     //close speed-checkbox if click was outside
-    if (event.target.parentElement === this.selectors.speedDDInsideElement)
+    if (event.target.parentElement !== this.selectors.speedDDElement)
       $("#drop").checked = false;
   }
 
