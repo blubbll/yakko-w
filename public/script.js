@@ -136,9 +136,9 @@ class VideoController {
   }
 
   onSpeedDDClick(event) {
-    this.selectors.videoElement.playbackRate = +event.target.getAttribute(
-      "data-val"
-    )||this.selectors.videoElement.playbackRate;
+    this.selectors.videoElement.playbackRate =
+      +event.target.getAttribute("data-val") ||
+      this.selectors.videoElement.playbackRate;
   }
 
   onBodyClick(event) {
@@ -166,22 +166,39 @@ class VideoController {
     function format(input) {
       return +input.replace(/:/g, "");
     }
+    function extraFormat(input) {
+      const PLUS = +input.split(":")[1] * 60000;
+
+      const NORMAL = +(input.split(":")[2] + input.split(":")[3]).replace(
+        /:/g,
+        ""
+      );
+      //console.log(PLUS + NORMAL);
+      return PLUS + NORMAL;
+    }
 
     if (!this.timeData) {
       const _timeData = [];
       let _infecTotal = 0;
       for (const KEY in YAKKO_MAP) {
-        const _next = format(Object.keys(YAKKO_MAP)[i + 1] || "1:00:00:000");
+        const _largerThanMin = +KEY.split(":")[1] > 0;
+
+        const _next = Object.keys(YAKKO_MAP)[i + 1] || "1:00:00:000";
+        const next = _largerThanMin ? extraFormat(_next) : format(_next);
 
         //count up total infected for time progress point
         _infecTotal += this.yakkodList[i].infected;
         _timeData.push({
           id: i,
           infecTotal: _infecTotal,
-          from: format(KEY) - (_preDelay - this.delay),
-          to: _next - (_preDelay - this.delay)
+          from:
+            (_largerThanMin ? extraFormat(KEY) : format(KEY)) -
+            (_preDelay - this.delay),
+          to: next - (_preDelay - this.delay)
         });
 
+        console.log(next- (_preDelay - this.delay))
+        
         i++;
       }
       this.timeData = _timeData;
@@ -211,8 +228,7 @@ class VideoController {
 
     if (this.yakkodList) {
       let entry = this.timeData.find(td => td.from <= ct && ct <= td.to);
-      
-      
+
       if (entry && this.stallData !== entry) {
         const current = this.yakkodList[entry.id];
         this.updateData(current, entry);
@@ -307,7 +323,8 @@ class Spot {
     );
 
     switch (obj.color) {
-      case "gold": case"yellow": {
+      case "gold":
+      case "yellow": {
         this.color = "gold";
         break;
       }
@@ -322,7 +339,7 @@ class Spot {
       }
     }
 
-    this.fixed = obj.fixed || false;
+    this.fixed = obj.fixed === undefined ? false : true;
   }
 }
 
@@ -330,7 +347,6 @@ class Spot {
 const makeYakkoList = json => {
   const output = [],
     processing = [];
-  let _congofix = 0;
   for (const raw of Object.values(json)) {
     switch (raw.country) {
       case "US": {
@@ -343,20 +359,7 @@ const makeYakkoList = json => {
         );
         break;
       }
-      case "Congo (Brazzaville)": {
-        _congofix = raw.data.confirmed;
-        break;
-      }
-      case "Congo (Kinshasa)": {
-        processing.push(
-          new Spot({
-            nation: "Congo",
-            infected: raw.data.confirmed + _congofix,
-            fixed: true
-          })
-        );
-        break;
-      }
+
       case "Czechia": {
         processing.push(
           new Spot({
@@ -367,16 +370,7 @@ const makeYakkoList = json => {
         );
         break;
       }
-      case "Equatorial Guinea": {
-        processing.push(
-          new Spot({
-            nation: "Guinea",
-            infected: raw.data.confirmed,
-            fixed: true
-          })
-        );
-        break;
-      }
+
       case "Korea, South": {
         processing.push(
           new Spot({
@@ -397,16 +391,7 @@ const makeYakkoList = json => {
         );
         break;
       }
-      case "South Sudan": {
-        processing.push(
-          new Spot({
-            nation: "Sudan",
-            infected: raw.data.confirmed,
-            fixed: true
-          })
-        );
-        break;
-      }
+
       case "Philippine Islands": {
         processing.push(
           new Spot({
@@ -460,7 +445,7 @@ const makeYakkoList = json => {
       case "Brunei": {
         processing.push(
           new Spot({
-            nation: "Borneo",
+            nation: "Borneo (Brunei)",
             infected: raw.data.confirmed,
             fixed: true
           })
@@ -468,10 +453,54 @@ const makeYakkoList = json => {
         break;
       }
 
-      case "United Arab Emirate": {
+      case "Western Sahara": {
+        processing.push(
+          new Spot({
+            nation: "W. Sahara",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
+        break;
+      }
+
+      case "Congo (Brazzaville)": {
+        processing.push(
+          new Spot({
+            nation: "Congo",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
+        break;
+      }
+
+      case "Congo (Kinshasa)": {
+        processing.push(
+          new Spot({
+            nation: "Dem. Rep. Congo",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
+        break;
+      }
+
+      case "United Arab Emirates": {
         processing.push(
           new Spot({
             nation: "Abu Dhabi",
+            infected: raw.data.confirmed,
+            fixed: true
+          })
+        );
+        break;
+      }
+
+      case "West Bank and Gaza": {
+        processing.push(
+          new Spot({
+            nation: "West Bank",
             infected: raw.data.confirmed,
             fixed: true
           })
@@ -538,7 +567,7 @@ const YAKKO_MAP = {
   "0:00:10:120": { nation: "United States", color: "green" },
   "0:00:10:550": { nation: "Canada", color: "purple" },
   "0:00:11:000": { nation: "Mexico", color: "orange" },
-  "0:00:11:400": { nation: "Panama", color: "green" },
+  "0:00:11:400": { nation: "Panama", color: "blue" },
   "0:00:11:950": { nation: "Haiti", color: "red" },
   "0:00:12:350": { nation: "Jamaica", color: "red" },
   "0:00:12:750": { nation: "Peru", color: "yellow" },
@@ -564,136 +593,157 @@ const YAKKO_MAP = {
   "0:00:26:100": { nation: "Bermuda", color: "purple" },
   "0:00:26:600": { nation: "Bahamas", color: "purple" },
   "0:00:27:100": { nation: "Tobago", color: "purple" },
-  "0:00:27:550": { nation: "San Juan" } //no color on yakkos map here
-  /*"
-  ,
-  "Paraguay",
-  "Uruguay",
-  "Suriname",
-  "French Guiana",
-  "Barbados",
-  "Guam",
-  "Norway",
-  "Sweden",
-  "Iceland",
-  "Finland",
-  "Germany",
-  "Switzerland",
-  "Austria",
-  "Czechoslovakia",
-  "Italy",
-  "Turkey",
-  "Greece",
-  "Poland",
-  "Romania",
-  "Scotland",
-  "Albania",
-  "Ireland",
-  "Russia",
-  "Oman",
-  "Saudi Arabia",
-  "Hungary",
-  "Cyprus",
-  "Iraq",
-  "Iran",
-  "Syria",
-  "Lebanon",
-  "Israel",
-  "Jordan",
-  "Yemens",
-  "Kuwait",
-  "Bahrain",
-  "Netherlands",
-  "Luxembourg",
-  "Belgium",
-  "Portugal",
-  "France",
-  "England",
-  "Denmark",
-  "Spain",
-  "India",
-  "Pakistan",
-  "Burma",
-  "Afghanistan",
-  "Thailand",
-  "Nepal",
-  "Bhutan",
-  "Kampuchea",
-  "Malaysia",
-  "Bangladesh",
-  "China",
-  "Korea",
-  "Japan",
-  "Mongolia",
-  "Laos",
-  "Tibet",
-  "Indonesia",
-  "Philippine Islands",
-  "Taiwan",
-  "Sri Lanka",
-  "New Guinea",
-  "Sumatra",
-  "New Zealand",
-  "Borneo",
-  "Vietnam",
-  "Tunisia",
-  "Morocco",
-  "Uganda",
-  "Angola",
-  "Zimbabwe",
-  "Djibouti",
-  "Botswana",
-  "Mozambique",
-  "Zambia",
-  "Swaziland",
-  "Gambia",
-  "Guinea",
-  "Algeria",
-  "Ghana",
-  "Burundi",
-  "Lesotho",
-  "Malawi",
-  "Togo",
-  "Niger",
-  "Nigeria",
-  "Chad",
-  "Liberia",
-  "Egypt",
-  "Benin",
-  "Gabon",
-  "Tanzania",
-  "Somalia",
-  "Kenya",
-  "Mali",
-  "Sierra Leone",
-  "Algiers",
-  "Dahomey",
-  "Namibia",
-  "Senegal",
-  "Libya",
-  "Cameroon",
-  "Congo",
-  "Zaire",
-  "Ethiopia",
-  "Guinea-Bissau",
-  "Madagascar",
-  "Rwanda",
-  "Maore",
-  "Cayman",
-  "Hong Kong",
-  "Abu Dhabi",
-  "Qatar",
-  "Yugoslavia",
-  "Crete",
-  "Mauritania",
-  "Transylvania",
-  "Monaco",
-  "Liechtenstein",
-  "Malta",
-  "Palestine",
-  "Fiji",
-  "Australia",
-  "Sudan"*/
+  "0:00:27:550": { nation: "San Juan", color: "red" },
+  "0:00:28:650": { nation: "Paraguay", color: "yellow" },
+  "0:00:29:100": "Uruguay",
+  "0:00:29:100": { nation: "Uruguay", color: "" },
+  "0:00:29:550": { nation: "Suriname", color: "" },
+  "0:00:30:200": { nation: "French Guiana", color: "" },
+  "0:00:30:800": { nation: "Barbados", color: "" },
+  "0:00:31:350": { nation: "Guam", color: "" },
+
+  "0:00:34:800": { nation: "Norway", color: "" },
+  "0:00:35:300": { nation: "Sweden", color: "" },
+  "0:00:35:750": { nation: "Iceland", color: "" },
+  "0:00:36:200": { nation: "Finland", color: "" },
+  "0:00:36:600": { nation: "Germany", color: "" },
+
+  "0:00:38:300": { nation: "Switzerland", color: "" },
+  "0:00:38:800": { nation: "Austria", color: "" },
+  "0:00:39:300": { nation: "Czechoslovakia", color: "" },
+  "0:00:40:200": { nation: "Italy", color: "" },
+  "0:00:40:650": { nation: "Turkey", color: "" },
+  "0:00:41:100": { nation: "Greece", color: "" },
+
+  "0:00:42:100": { nation: "Poland", color: "" },
+  "0:00:42:450": { nation: "Romania", color: "" },
+  "0:00:42:800": { nation: "Scotland", color: "" },
+  "0:00:43:250": { nation: "Albania", color: "" },
+  "0:00:43:750": { nation: "Ireland", color: "" },
+  "0:00:44:250": { nation: "Russia", color: "" },
+  "0:00:44:550": { nation: "Oman", color: "" },
+
+  "0:00:45:400": { nation: "Bulgaria", color: "" },
+  "0:00:45:850": { nation: "Saudi Arabia", color: "" },
+  "0:00:46:800": { nation: "Hungary", color: "" },
+  "0:00:47:200": { nation: "Cyprus", color: "" },
+  "0:00:47:600": { nation: "Iraq", color: "" },
+  "0:00:48:100": { nation: "Iran", color: "" },
+
+  "0:00:49:100": { nation: "Syria", color: "" },
+  "0:00:49:550": { nation: "Lebanon", color: "" },
+  "0:00:50:000": { nation: "Israel", color: "" },
+  "0:00:50:450": { nation: "Jordan", color: "" },
+  "0:00:50:750": { nation: "Yemen", color: "" },
+  "0:00:51:250": { nation: "Kuwait", color: "" },
+  "0:00:51:650": { nation: "Bahrain", color: "" },
+
+  "0:00:52:550": { nation: "Netherlands", color: "" },
+  "0:00:52:900": { nation: "Luxembourg", color: "" },
+  "0:00:53:500": { nation: "Belgium", color: "" },
+  "0:00:53:950": { nation: "Portugal", color: "" },
+  "0:00:54:450": { nation: "France", color: "" },
+  "0:00:54:600": { nation: "England", color: "" },
+  "0:00:54:800": { nation: "Denmark", color: "" },
+  "0:00:55:400": { nation: "Spain", color: "" },
+
+  "0:00:58:810": { nation: "India", color: "" },
+  "0:00:59:250": { nation: "Pakistan", color: "" },
+  "0:00:59:650": { nation: "Burma", color: "" },
+  "0:01:00:000": { nation: "Afghanistan", color: "" },
+  "0:01:00:500": { nation: "Thailand", color: "" },
+  "0:01:00:900": { nation: "Nepal", color: "" },
+  "0:01:01:300": { nation: "Bhutan", color: "" },
+
+  "0:01:01:800": { nation: "Cambodia", color: "" },
+  "0:01:02:600": { nation: "Malaysia", color: "" },
+  "0:01:03:200": { nation: "Bangladesh", color: "" },
+  "0:01:04:000": { nation: "Asia", color: "" },
+  "0:01:04:150": { nation: "China", color: "" },
+  "0:01:04:500": { nation: "Korea", color: "" },
+  "0:01:05:000": { nation: "Japan", color: "" },
+
+  "0:01:06:000": { nation: "Mongolia", color: "" },
+  "0:01:06:310": { nation: "Laos", color: "" },
+  "0:01:06:650": { nation: "Tibet", color: "" },
+  "0:01:07:200": { nation: "Indonesia", color: "" },
+  "0:01:07:800": { nation: "Philippines", color: "" },
+  "0:01:08:500": { nation: "Taiwan", color: "" },
+
+  "0:01:09:400": { nation: "Sri Lanka", color: "" },
+  "0:01:09:900": { nation: "Papua New Guinea", color: "" },
+  "0:01:10:300": { nation: "Sumatra", color: "" },
+  "0:01:10:700": { nation: "New Zealand", color: "" },
+  "0:01:11:200": { nation: "Borneo (Brunei)", color: "" },
+  "0:01:11:800": { nation: "Vietnam", color: "" },
+
+  "0:01:12:800": { nation: "Tunisia", color: "" },
+  "0:01:13:300": { nation: "Morocco", color: "" },
+  "0:01:13:800": { nation: "Uganda", color: "" },
+  "0:01:14:200": { nation: "Angola", color: "" },
+  "0:01:14:600": { nation: "Zimbabwe", color: "" },
+  "0:01:15:000": { nation: "Djibouti", color: "" },
+  "0:01:15:500": { nation: "Botswana", color: "" },
+
+  "0:01:16:500": { nation: "Mozambique", color: "" },
+  "0:01:17:000": { nation: "Zambia", color: "" },
+  "0:01:17:500": { nation: "Swaziland", color: "" },
+  "0:01:18:000": { nation: "Gambia", color: "" },
+  "0:01:18:500": { nation: "Guinea", color: "" },
+  "0:01:18:900": { nation: "Algeria", color: "" },
+  "0:01:19:300": { nation: "Ghana", color: "" },
+
+  "0:01:22:200": { nation: "Burundi", color: "" },
+  "0:01:22:600": { nation: "Lesotho", color: "" },
+  "0:01:23:000": { nation: "Malawi", color: "" },
+  "0:01:23:400": { nation: "Togo", color: "" },
+  "0:01:23:800": { nation: "W. Sahara", color: "" },
+
+  "0:01:25:600": { nation: "Niger", color: "" },
+  "0:01:26:000": { nation: "Nigeria", color: "" },
+  "0:01:26:400": { nation: "Chad", color: "" },
+  "0:01:26:800": { nation: "Liberia", color: "" },
+  "0:01:27:200": { nation: "Egypt", color: "" },
+  "0:01:27:600": { nation: "Benin", color: "" },
+  "0:01:28:000": { nation: "Gabon", color: "" },
+
+  "0:01:28:500": { nation: "Tanzania", color: "" },
+  "0:01:29:000": { nation: "Somalia", color: "" },
+  "0:01:29:500": { nation: "Kenya", color: "" },
+  "0:01:29:800": { nation: "Mali", color: "" },
+  "0:01:30:200": { nation: "Sierra Leone", color: "" },
+  "0:01:31:000": { nation: "Algiers", color: "" },
+
+  "0:01:31:800": { nation: "Dahomey", color: "" },
+  "0:01:32:200": { nation: "Namibia", color: "" },
+  "0:01:32:700": { nation: "Senegal", color: "" },
+  "0:01:33:200": { nation: "Libya", color: "" },
+  "0:01:33:600": { nation: "Cameroon", color: "" },
+  "0:01:34:000": { nation: "Congo", color: "" },
+  "0:01:34:400": { nation: "Dem. Rep. Congo", color: "" }, // Zaire
+
+  "0:01:35:000": { nation: "Ethiopia", color: "" },
+  "0:01:35:500": { nation: "Guinea-Bissau", color: "" },
+  "0:01:36:000": { nation: "Madagascar", color: "" },
+  "0:01:36:400": { nation: "Rwanda", color: "" },
+  "0:01:36:800": { nation: "Mayotte", color: "" },
+  "0:01:37:200": { nation: "Cayman Is.", color: "" },
+
+  "0:01:38:000": { nation: "Hong Kong", color: "" },
+  "0:01:38:400": { nation: "Abu Dhabi", color: "" },
+  "0:01:38:800": { nation: "Qatar", color: "" },
+  "0:01:39:200": { nation: "Yugoslavia", color: "" },
+
+  "0:01:40:100": { nation: "Crete", color: "" },
+  "0:01:40:500": { nation: "Mauritania", color: "" },
+  "0:01:41:200": { nation: "Transylvania", color: "" },
+  "0:01:41:800": { nation: "Monaco", color: "" },
+  "0:01:42:200": { nation: "Liechtenstein", color: "" },
+  "0:01:42:600": { nation: "Malta", color: "" },
+  "0:01:43:000": { nation: "West Bank", color: "" },
+  "0:01:43:400": { nation: "Fiji", color: "" },
+  "0:01:43:800": { nation: "Australia", color: "" },
+  "0:01:44:200": { nation: "Sudan", color: "" }
 };
 
 {
@@ -858,4 +908,108 @@ const YAKKO_MAP = {
     "Zambia",
     "Zimbabwe"
   ];
+  /*"
+  ,
+  "Hungary",
+  "Cyprus",
+  "Iraq",
+  "Iran",
+  "Syria",
+  "Lebanon",
+  "Israel",
+  "Jordan",
+  "Yemens",
+  "Kuwait",
+  "Bahrain",
+  "Netherlands",
+  "Luxembourg",
+  "Belgium",
+  "Portugal",
+  "France",
+  "England",
+  "Denmark",
+  "Spain",
+  "India",
+  "Pakistan",
+  "Burma",
+  "Afghanistan",
+  "Thailand",
+  "Nepal",
+  "Bhutan",
+  "Kampuchea",
+  "Malaysia",
+  "Bangladesh",
+  "China",
+  "Korea",
+  "Japan",
+  "Mongolia",
+  "Laos",
+  "Tibet",
+  "Indonesia",
+  "Philippine Islands",
+  "Taiwan",
+  "Sri Lanka",
+  "New Guinea",
+  "Sumatra",
+  "New Zealand",
+  "Borneo",
+  "Vietnam",
+  "Tunisia",
+  "Morocco",
+  "Uganda",
+  "Angola",
+  "Zimbabwe",
+  "Djibouti",
+  "Botswana",
+  "Mozambique",
+  "Zambia",
+  "Swaziland",
+  "Gambia",
+  "Guinea",
+  "Algeria",
+  "Ghana",
+  "Burundi",
+  "Lesotho",
+  "Malawi",
+  "Togo",
+  "Niger",
+  "Nigeria",
+  "Chad",
+  "Liberia",
+  "Egypt",
+  "Benin",
+  "Gabon",
+  "Tanzania",
+  "Somalia",
+  "Kenya",
+  "Mali",
+  "Sierra Leone",
+  "Algiers",
+  "Dahomey",
+  "Namibia",
+  "Senegal",
+  "Libya",
+  "Cameroon",
+  "Congo",
+  "Zaire",
+  "Ethiopia",
+  "Guinea-Bissau",
+  "Madagascar",
+  "Rwanda",
+  "Maore",
+  "Cayman",
+  "Hong Kong",
+  "Abu Dhabi",
+  "Qatar",
+  "Yugoslavia",
+  "Crete",
+  "Mauritania",
+  "Transylvania",
+  "Monaco",
+  "Liechtenstein",
+  "Malta",
+  "Palestine",
+  "Fiji",
+  "Australia",
+  "Sudan"*/
 }
