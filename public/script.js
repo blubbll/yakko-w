@@ -34,7 +34,7 @@ class VideoController {
     this.cacheSelectors();
     this.bindEvents();
     this.oTitle = document.title;
-    this.delay = 3500;
+    this.delay = 3650;
   }
 
   cacheSelectors() {
@@ -562,7 +562,7 @@ const YAKKO_MAP = {
   "0:00:25:100": { nation: "Belize", color: "orange" },
   "0:00:25:500": { nation: "Nicaragua", color: "darkgreen" },
   "0:00:26:100": { nation: "Bermuda", color: "purple" },
-  "0:00:26:600": { nation: "Bahamas", color: "orange" },
+  "0:00:26:600": { nation: "Bahamas", color: "purple" },
   "0:00:27:100": { nation: "Tobago", color: "purple" },
   "0:00:27:550": { nation: "San Juan" } //no color on yakkos map here
   /*"
