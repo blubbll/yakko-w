@@ -182,9 +182,14 @@ class VideoController {
       let _infecTotal = 0;
       for (const KEY in YAKKO_MAP) {
         const _largerThanMin = +KEY.split(":")[1] > 0;
+        const _hasNext = Object.keys(YAKKO_MAP)[i + 1];
 
-        const _next = Object.keys(YAKKO_MAP)[i + 1] || "1:00:00:000";
-        const next = _largerThanMin ? extraFormat(_next) : format(_next);
+        let _next, _nextLargerThanMin, next;
+        if (_hasNext) {
+          _nextLargerThanMin = +Object.keys(YAKKO_MAP)[i + 1].split(":")[1] > 0;
+          _next = Object.keys(YAKKO_MAP)[i + 1];
+          next = _nextLargerThanMin ? extraFormat(_next) : format(_next);
+        }
 
         //count up total infected for time progress point
         _infecTotal += this.yakkodList[i].infected;
@@ -194,11 +199,9 @@ class VideoController {
           from:
             (_largerThanMin ? extraFormat(KEY) : format(KEY)) -
             (_preDelay - this.delay),
-          to: next - (_preDelay - this.delay)
+          to: _hasNext ? next - (_preDelay - this.delay) : "1:00:00:000"
         });
 
-        console.log(next- (_preDelay - this.delay))
-        
         i++;
       }
       this.timeData = _timeData;
