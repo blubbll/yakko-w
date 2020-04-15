@@ -663,7 +663,7 @@ const YAKKO_MAP = {
   "0:00:50:450": { nation: "Jordan", color: "pink" },
   "0:00:50:750": { nation: "Yemen", color: "red" },
   "0:00:51:250": { nation: "Kuwait", color: "purple" },
-  "0:00:51:650": { nation: "Bahrain", color: "dakgreen" },
+  "0:00:51:650": { nation: "Bahrain", color: "darkgreen" },
 
   "0:00:52:550": { nation: "Netherlands", color: "orange" },
   "0:00:52:900": { nation: "Luxembourg", color: "darkgreen" },
