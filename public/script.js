@@ -5,7 +5,7 @@ const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
 //set generic
-let { app_start, route } = window;
+let {} = window;
 
 function hexToRgb(hex) {
   // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
@@ -24,11 +24,6 @@ function hexToRgb(hex) {
     : null;
 }
 
-/*setTimeout(() => {
-  V.startUpdateloop();
-  console.log(V.timeData);
-});
-*/
 class VideoController {
   constructor() {
     this.cacheSelectors();
@@ -192,7 +187,7 @@ class VideoController {
         }
 
         //count up total infected for time progress point
-        _infecTotal += this.yakkodList[i].infected;
+        _infecTotal += +`${this.yakkodList[i].infected}`.replace(/[^0-9]/,"");
         _timeData.push({
           id: i,
           infecTotal: _infecTotal,
@@ -325,12 +320,47 @@ class Spot {
       n => n.nation === this.nation
     );
 
-    switch (obj.color) {
+    let INHERITED_COLOR;
+    INHERITED_DATA && [(INHERITED_COLOR = INHERITED_DATA.color)];
+
+    switch (INHERITED_COLOR || obj.color) {
       case "gold":
       case "yellow": {
         this.color = "gold";
         break;
       }
+      case "pink":
+      case "hotpink": {
+        this.color = "hotpink";
+        break;
+      }
+      case "orange":
+      case "palevioletred": {
+        this.color = "palevioletred";
+        break;
+      }
+      case "green":
+      case "mediumseagreen": {
+        this.color = "mediumseagreen";
+        break;
+      }
+      case "red":
+      case "#800032": {
+        //bordaeux-red
+        this.color = "#800032";
+        break;
+      }
+      case "purple":
+      case "rebeccapurple": {
+        this.color = "rebeccapurple";
+        break;
+      }
+      case "blue":
+      case "royalblue": {
+        this.color = "royalblue";
+        break;
+      }
+
       default: {
         this.color =
           INHERITED_DATA && INHERITED_DATA.color
@@ -378,16 +408,6 @@ const makeYakkoList = json => {
         processing.push(
           new Spot({
             nation: "Korea",
-            infected: raw.data.confirmed,
-            fixed: true
-          })
-        );
-        break;
-      }
-      case "Papua New Guinea": {
-        processing.push(
-          new Spot({
-            nation: "New Guinea",
             infected: raw.data.confirmed,
             fixed: true
           })
@@ -556,7 +576,7 @@ const makeYakkoList = json => {
       console.warn(
         `ANOMALY: Nation "${MAPDATA.nation}" not found in LIVE list!`
       );
-      output.push(new Spot({ nation: MAPDATA.nation }));
+      output.push(new Spot({ nation: MAPDATA.nation, infected: "?" }));
     }
   }
 
@@ -598,68 +618,67 @@ const YAKKO_MAP = {
   "0:00:27:100": { nation: "Tobago", color: "purple" },
   "0:00:27:550": { nation: "San Juan", color: "red" },
   "0:00:28:650": { nation: "Paraguay", color: "yellow" },
-  "0:00:29:100": "Uruguay",
-  "0:00:29:100": { nation: "Uruguay", color: "" },
-  "0:00:29:550": { nation: "Suriname", color: "" },
-  "0:00:30:200": { nation: "French Guiana", color: "" },
-  "0:00:30:800": { nation: "Barbados", color: "" },
-  "0:00:31:350": { nation: "Guam", color: "" },
+  "0:00:29:100": { nation: "Uruguay", color: "purple" },
+  "0:00:29:550": { nation: "Suriname", color: "yellow" },
+  "0:00:30:200": { nation: "French Guiana", color: "green" },
+  "0:00:30:800": { nation: "Barbados", color: "red" },
+  "0:00:31:350": { nation: "Guam", color: "pink" },
 
-  "0:00:34:800": { nation: "Norway", color: "" },
-  "0:00:35:300": { nation: "Sweden", color: "" },
-  "0:00:35:750": { nation: "Iceland", color: "" },
-  "0:00:36:200": { nation: "Finland", color: "" },
-  "0:00:36:600": { nation: "Germany", color: "" },
+  "0:00:34:800": { nation: "Norway", color: "purple" },
+  "0:00:35:300": { nation: "Sweden", color: "yellow" },
+  "0:00:35:750": { nation: "Iceland", color: "yellow" },
+  "0:00:36:200": { nation: "Finland", color: "darkgreen" },
+  "0:00:36:600": { nation: "Germany", color: "darkgreen" },
 
-  "0:00:38:300": { nation: "Switzerland", color: "" },
-  "0:00:38:800": { nation: "Austria", color: "" },
-  "0:00:39:300": { nation: "Czechoslovakia", color: "" },
-  "0:00:40:200": { nation: "Italy", color: "" },
-  "0:00:40:650": { nation: "Turkey", color: "" },
-  "0:00:41:100": { nation: "Greece", color: "" },
+  "0:00:38:300": { nation: "Switzerland", color: "purple" },
+  "0:00:38:800": { nation: "Austria", color: "yellow" },
+  "0:00:39:300": { nation: "Czechoslovakia", color: "green" },
+  "0:00:40:200": { nation: "Italy", color: "orange" },
+  "0:00:40:650": { nation: "Turkey", color: "orange" },
+  "0:00:41:100": { nation: "Greece", color: "orange" },
 
-  "0:00:42:100": { nation: "Poland", color: "" },
-  "0:00:42:450": { nation: "Romania", color: "" },
-  "0:00:42:800": { nation: "Scotland", color: "" },
-  "0:00:43:250": { nation: "Albania", color: "" },
-  "0:00:43:750": { nation: "Ireland", color: "" },
-  "0:00:44:250": { nation: "Russia", color: "" },
-  "0:00:44:550": { nation: "Oman", color: "" },
+  "0:00:42:100": { nation: "Poland", color: "pink" },
+  "0:00:42:450": { nation: "Romania", color: "red" },
+  "0:00:42:800": { nation: "Scotland", color: "yellow" },
+  "0:00:43:250": { nation: "Albania", color: "purple" },
+  "0:00:43:750": { nation: "Ireland", color: "green" },
+  "0:00:44:250": { nation: "Russia", color: "orange" },
+  "0:00:44:550": { nation: "Oman", color: "purple" },
 
-  "0:00:45:400": { nation: "Bulgaria", color: "" },
-  "0:00:45:850": { nation: "Saudi Arabia", color: "" },
-  "0:00:46:800": { nation: "Hungary", color: "" },
-  "0:00:47:200": { nation: "Cyprus", color: "" },
-  "0:00:47:600": { nation: "Iraq", color: "" },
-  "0:00:48:100": { nation: "Iran", color: "" },
+  "0:00:45:400": { nation: "Bulgaria", color: "red" },
+  "0:00:45:850": { nation: "Saudi Arabia", color: "darkgreen" },
+  "0:00:46:800": { nation: "Hungary", color: "green" },
+  "0:00:47:200": { nation: "Cyprus", color: "pink" },
+  "0:00:47:600": { nation: "Iraq", color: "purple" },
+  "0:00:48:100": { nation: "Iran", color: "red" },
 
-  "0:00:49:100": { nation: "Syria", color: "" },
-  "0:00:49:550": { nation: "Lebanon", color: "" },
-  "0:00:50:000": { nation: "Israel", color: "" },
-  "0:00:50:450": { nation: "Jordan", color: "" },
-  "0:00:50:750": { nation: "Yemen", color: "" },
-  "0:00:51:250": { nation: "Kuwait", color: "" },
-  "0:00:51:650": { nation: "Bahrain", color: "" },
+  "0:00:49:100": { nation: "Syria", color: "purple" },
+  "0:00:49:550": { nation: "Lebanon", color: "pink" },
+  "0:00:50:000": { nation: "Israel", color: "yellow" },
+  "0:00:50:450": { nation: "Jordan", color: "pink" },
+  "0:00:50:750": { nation: "Yemen", color: "red" },
+  "0:00:51:250": { nation: "Kuwait", color: "purple" },
+  "0:00:51:650": { nation: "Bahrain", color: "dakgreen" },
 
-  "0:00:52:550": { nation: "Netherlands", color: "" },
-  "0:00:52:900": { nation: "Luxembourg", color: "" },
-  "0:00:53:500": { nation: "Belgium", color: "" },
-  "0:00:53:950": { nation: "Portugal", color: "" },
-  "0:00:54:450": { nation: "France", color: "" },
-  "0:00:54:600": { nation: "England", color: "" },
-  "0:00:54:800": { nation: "Denmark", color: "" },
-  "0:00:55:400": { nation: "Spain", color: "" },
+  "0:00:52:550": { nation: "Netherlands", color: "orange" },
+  "0:00:52:900": { nation: "Luxembourg", color: "darkgreen" },
+  "0:00:53:500": { nation: "Belgium", color: "orange" },
+  "0:00:53:950": { nation: "Portugal", color: "red" },
+  "0:00:54:450": { nation: "France", color: "green" },
+  "0:00:54:600": { nation: "England", color: "yellow" },
+  "0:00:54:800": { nation: "Denmark", color: "orange" },
+  "0:00:55:400": { nation: "Spain", color: "darkgreen" },
 
-  "0:00:58:810": { nation: "India", color: "" },
-  "0:00:59:250": { nation: "Pakistan", color: "" },
-  "0:00:59:650": { nation: "Burma", color: "" },
-  "0:01:00:000": { nation: "Afghanistan", color: "" },
-  "0:01:00:500": { nation: "Thailand", color: "" },
-  "0:01:00:900": { nation: "Nepal", color: "" },
-  "0:01:01:300": { nation: "Bhutan", color: "" },
+  "0:00:58:810": { nation: "India", color: "red" },
+  "0:00:59:250": { nation: "Pakistan", color: "darkgreen" },
+  "0:00:59:650": { nation: "Burma", color: "green" },
+  "0:01:00:000": { nation: "Afghanistan", color: "yellow" },
+  "0:01:00:500": { nation: "Thailand", color: "green" },
+  "0:01:00:900": { nation: "Nepal", color: "red" },
+  "0:01:01:300": { nation: "Bhutan", color: "red" },
 
-  "0:01:01:800": { nation: "Cambodia", color: "" },
-  "0:01:02:600": { nation: "Malaysia", color: "" },
+  "0:01:01:800": { nation: "Cambodia", color: "pink" },
+  "0:01:02:600": { nation: "Malaysia", color: "purple" },
   "0:01:03:200": { nation: "Bangladesh", color: "" },
   "0:01:04:000": { nation: "Asia", color: "" },
   "0:01:04:150": { nation: "China", color: "" },
