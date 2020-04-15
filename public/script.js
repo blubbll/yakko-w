@@ -269,7 +269,7 @@ class VideoController {
         }
         break;
       default: {
-        document.title = `infected: ${current.infected}`;
+        document.title = `infected: ${entry.infecTotal}`;
       }
     }
 
