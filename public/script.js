@@ -29,7 +29,7 @@ class VideoController {
     this.cacheSelectors();
     this.bindEvents();
     this.oTitle = document.title;
-    this.delay = 3650;
+    this.delay = 3675;
   }
 
   cacheSelectors() {
@@ -194,7 +194,7 @@ class VideoController {
           from:
             (_largerThanMin ? extraFormat(KEY) : format(KEY)) -
             (_preDelay - this.delay),
-          to: _hasNext ? next - (_preDelay - this.delay) : "1:00:00:000"
+          to: _hasNext ? next - (_preDelay - this.delay) : format("1:00:00:000")
         });
 
         i++;
@@ -501,7 +501,7 @@ const makeYakkoList = json => {
       case "Congo (Kinshasa)": {
         processing.push(
           new Spot({
-            nation: "Dem. Rep. Congo",
+            nation: "Zaire (Dem. Rep. Congo)",
             infected: raw.data.confirmed,
             fixed: true
           })
@@ -594,22 +594,26 @@ const YAKKO_MAP = {
   "0:00:11:950": { nation: "Haiti", color: "red" },
   "0:00:12:350": { nation: "Jamaica", color: "red" },
   "0:00:12:750": { nation: "Peru", color: "yellow" },
+  
   "0:00:13:600": { nation: "Republic Dominica", color: "red" },
   "0:00:14:500": { nation: "Cuba", color: "red" },
   "0:00:15:000": { nation: "Caribbean" },
   "0:00:15:550": { nation: "Greenland", color: "green" },
   "0:00:16:050": { nation: "El Salvador", color: "purple" },
+  
   "0:00:17:100": { nation: "Puerto Rico", color: "red" },
   "0:00:17:800": { nation: "Colombia", color: "red" },
   "0:00:18:350": { nation: "Venezuela", color: "green" },
   "0:00:19:200": { nation: "Honduras", color: "darkgreen" },
   "0:00:19:600": { nation: "Guyana", color: "blue" },
+  
   "0:00:21:000": { nation: "Guatemala", color: "green" },
   "0:00:21:550": { nation: "Bolivia", color: "blue" },
   "0:00:22:150": { nation: "Argentina", color: "green" },
   "0:00:23:000": { nation: "Ecuador", color: "green" },
   "0:00:23:450": { nation: "Chile", color: "red" },
   "0:00:23:850": { nation: "Brazil", color: "orange" },
+  
   "0:00:24:400": { nation: "Costa Rica", color: "yellow" },
   "0:00:25:100": { nation: "Belize", color: "orange" },
   "0:00:25:500": { nation: "Nicaragua", color: "darkgreen" },
@@ -617,6 +621,7 @@ const YAKKO_MAP = {
   "0:00:26:600": { nation: "Bahamas", color: "purple" },
   "0:00:27:100": { nation: "Tobago", color: "purple" },
   "0:00:27:550": { nation: "San Juan", color: "red" },
+  
   "0:00:28:650": { nation: "Paraguay", color: "yellow" },
   "0:00:29:100": { nation: "Uruguay", color: "purple" },
   "0:00:29:550": { nation: "Suriname", color: "yellow" },
@@ -679,86 +684,86 @@ const YAKKO_MAP = {
 
   "0:01:01:800": { nation: "Cambodia", color: "pink" },
   "0:01:02:600": { nation: "Malaysia", color: "purple" },
-  "0:01:03:200": { nation: "Bangladesh", color: "" },
+  "0:01:03:200": { nation: "Bangladesh", color: "red" },
   "0:01:04:000": { nation: "Asia", color: "" },
-  "0:01:04:150": { nation: "China", color: "" },
-  "0:01:04:500": { nation: "Korea", color: "" },
-  "0:01:05:000": { nation: "Japan", color: "" },
+  "0:01:04:150": { nation: "China", color: "pink" },
+  "0:01:04:500": { nation: "Korea", color: "darkgreen" },
+  "0:01:05:000": { nation: "Japan", color: "red" },
 
-  "0:01:06:000": { nation: "Mongolia", color: "" },
-  "0:01:06:310": { nation: "Laos", color: "" },
-  "0:01:06:650": { nation: "Tibet", color: "" },
-  "0:01:07:200": { nation: "Indonesia", color: "" },
-  "0:01:07:800": { nation: "Philippines", color: "" },
-  "0:01:08:500": { nation: "Taiwan", color: "" },
+  "0:01:06:000": { nation: "Mongolia", color: "green" },
+  "0:01:06:310": { nation: "Laos", color: "orange" },
+  "0:01:06:650": { nation: "Tibet", color: "pink" },
+  "0:01:07:200": { nation: "Indonesia", color: "darkgreen" },
+  "0:01:07:800": { nation: "Philippines", color: "pink" },
+  "0:01:08:500": { nation: "Taiwan", color: "pink" },
 
-  "0:01:09:400": { nation: "Sri Lanka", color: "" },
-  "0:01:09:900": { nation: "Papua New Guinea", color: "" },
-  "0:01:10:300": { nation: "Sumatra", color: "" },
-  "0:01:10:700": { nation: "New Zealand", color: "" },
-  "0:01:11:200": { nation: "Borneo (Brunei)", color: "" },
-  "0:01:11:800": { nation: "Vietnam", color: "" },
+  "0:01:09:400": { nation: "Sri Lanka", color: "purple" },
+  "0:01:09:900": { nation: "Papua New Guinea", color: "pink" },
+  "0:01:10:300": { nation: "Sumatra", color: "yellow" },
+  "0:01:10:700": { nation: "New Zealand", color: "purple" },
+  "0:01:11:200": { nation: "Borneo (Brunei)", color: "darkgreen" },
+  "0:01:11:800": { nation: "Vietnam", color: "orange" },
 
-  "0:01:12:800": { nation: "Tunisia", color: "" },
-  "0:01:13:300": { nation: "Morocco", color: "" },
-  "0:01:13:800": { nation: "Uganda", color: "" },
-  "0:01:14:200": { nation: "Angola", color: "" },
-  "0:01:14:600": { nation: "Zimbabwe", color: "" },
-  "0:01:15:000": { nation: "Djibouti", color: "" },
-  "0:01:15:500": { nation: "Botswana", color: "" },
+  "0:01:12:800": { nation: "Tunisia", color: "darkgreen" },
+  "0:01:13:300": { nation: "Morocco", color: "purple" },
+  "0:01:13:800": { nation: "Uganda", color: "pink" },
+  "0:01:14:200": { nation: "Angola", color: "purple" },
+  "0:01:14:600": { nation: "Zimbabwe", color: "orange" },
+  "0:01:15:000": { nation: "Djibouti", color: "purple" },
+  "0:01:15:500": { nation: "Botswana", color: "yellow" },
 
-  "0:01:16:500": { nation: "Mozambique", color: "" },
-  "0:01:17:000": { nation: "Zambia", color: "" },
-  "0:01:17:500": { nation: "Swaziland", color: "" },
-  "0:01:18:000": { nation: "Gambia", color: "" },
-  "0:01:18:500": { nation: "Guinea", color: "" },
-  "0:01:18:900": { nation: "Algeria", color: "" },
-  "0:01:19:300": { nation: "Ghana", color: "" },
+  "0:01:16:500": { nation: "Mozambique", color: "pink" },
+  "0:01:17:000": { nation: "Zambia", color: "darkgreen" },
+  "0:01:17:500": { nation: "Swaziland", color: "orange" },
+  "0:01:18:000": { nation: "Gambia", color: "pink" },
+  "0:01:18:500": { nation: "Guinea", color: "orange" },
+  "0:01:18:900": { nation: "Algeria", color: "red" },
+  "0:01:19:300": { nation: "Ghana", color: "pink" },
 
-  "0:01:22:200": { nation: "Burundi", color: "" },
-  "0:01:22:600": { nation: "Lesotho", color: "" },
-  "0:01:23:000": { nation: "Malawi", color: "" },
-  "0:01:23:400": { nation: "Togo", color: "" },
-  "0:01:23:800": { nation: "W. Sahara", color: "" },
+  "0:01:22:200": { nation: "Burundi", color: "red" },
+  "0:01:22:600": { nation: "Lesotho", color: "green" },
+  "0:01:23:000": { nation: "Malawi", color: "darkgreen" },
+  "0:01:23:400": { nation: "Togo", color: "pink" },
+  "0:01:23:800": { nation: "W. Sahara", color: "pink" },
 
-  "0:01:25:600": { nation: "Niger", color: "" },
-  "0:01:26:000": { nation: "Nigeria", color: "" },
-  "0:01:26:400": { nation: "Chad", color: "" },
-  "0:01:26:800": { nation: "Liberia", color: "" },
-  "0:01:27:200": { nation: "Egypt", color: "" },
-  "0:01:27:600": { nation: "Benin", color: "" },
-  "0:01:28:000": { nation: "Gabon", color: "" },
+  "0:01:25:600": { nation: "Niger", color: "yellow" },
+  "0:01:26:000": { nation: "Nigeria", color: "orange" },
+  "0:01:26:400": { nation: "Chad", color: "red" },
+  "0:01:26:800": { nation: "Liberia", color: "yellow" },
+  "0:01:27:200": { nation: "Egypt", color: "orange" },
+  "0:01:27:600": { nation: "Benin", color: "darkgreen" },
+  "0:01:28:000": { nation: "Gabon", color: "orange" },
 
-  "0:01:28:500": { nation: "Tanzania", color: "" },
-  "0:01:29:000": { nation: "Somalia", color: "" },
-  "0:01:29:500": { nation: "Kenya", color: "" },
-  "0:01:29:800": { nation: "Mali", color: "" },
-  "0:01:30:200": { nation: "Sierra Leone", color: "" },
-  "0:01:31:000": { nation: "Algiers", color: "" },
+  "0:01:28:500": { nation: "Tanzania", color: "green" },
+  "0:01:29:000": { nation: "Somalia", color: "darkgreen" },
+  "0:01:29:500": { nation: "Kenya", color: "yellow" },
+  "0:01:29:800": { nation: "Mali", color: "darkgreen" },
+  "0:01:30:200": { nation: "Sierra Leone", color: "orange" },
+  "0:01:31:000": { nation: "Algiers", color: "red" },
 
-  "0:01:31:800": { nation: "Dahomey", color: "" },
-  "0:01:32:200": { nation: "Namibia", color: "" },
-  "0:01:32:700": { nation: "Senegal", color: "" },
-  "0:01:33:200": { nation: "Libya", color: "" },
-  "0:01:33:600": { nation: "Cameroon", color: "" },
-  "0:01:34:000": { nation: "Congo", color: "" },
-  "0:01:34:400": { nation: "Dem. Rep. Congo", color: "" }, // Zaire
+  "0:01:31:800": { nation: "Dahomey", color: "darkgreen" },
+  "0:01:32:200": { nation: "Namibia", color: "red" },
+  "0:01:32:700": { nation: "Senegal", color: "pink" },
+  "0:01:33:200": { nation: "Libya", color: "purple" },
+  "0:01:33:600": { nation: "Cameroon", color: "darkgreen" },
+  "0:01:34:000": { nation: "Congo", color: "red" },
+  "0:01:34:400": { nation: "Zaire (Dem. Rep. Congo)", color: "red" }, // Zaire
 
-  "0:01:35:000": { nation: "Ethiopia", color: "" },
-  "0:01:35:500": { nation: "Guinea-Bissau", color: "" },
-  "0:01:36:000": { nation: "Madagascar", color: "" },
-  "0:01:36:400": { nation: "Rwanda", color: "" },
-  "0:01:36:800": { nation: "Mayotte", color: "" },
-  "0:01:37:200": { nation: "Cayman Is.", color: "" },
+  "0:01:35:000": { nation: "Ethiopia", color: "purple" },
+  "0:01:35:500": { nation: "Guinea-Bissau", color: "orange" },
+  "0:01:36:000": { nation: "Madagascar", color: "orange" },
+  "0:01:36:400": { nation: "Rwanda", color: "red" },
+  "0:01:36:800": { nation: "Mayotte", color: "orange" },
+  "0:01:37:200": { nation: "Cayman Is.", color: "red" },
 
-  "0:01:38:000": { nation: "Hong Kong", color: "" },
-  "0:01:38:400": { nation: "Abu Dhabi", color: "" },
-  "0:01:38:800": { nation: "Qatar", color: "" },
-  "0:01:39:200": { nation: "Yugoslavia", color: "" },
+  "0:01:38:000": { nation: "Hong Kong", color: "orange" },
+  "0:01:38:400": { nation: "Abu Dhabi", color: "darkgreen" },
+  "0:01:38:800": { nation: "Qatar", color: "darkgreen" },
+  "0:01:39:200": { nation: "Yugoslavia", color: "pink" },
 
-  "0:01:40:100": { nation: "Crete", color: "" },
-  "0:01:40:500": { nation: "Mauritania", color: "" },
-  "0:01:41:200": { nation: "Transylvania", color: "" },
+  "0:01:40:100": { nation: "Crete", color: "orange" },
+  "0:01:40:500": { nation: "Mauritania", color: "darkgreen" },
+  "0:01:41:200": { nation: "Transylvania", color: "red" },
   "0:01:41:800": { nation: "Monaco", color: "" },
   "0:01:42:200": { nation: "Liechtenstein", color: "" },
   "0:01:42:600": { nation: "Malta", color: "" },
