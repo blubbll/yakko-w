@@ -187,7 +187,7 @@ class VideoController {
         }
 
         //count up total infected for time progress point
-        _infecTotal += +`${this.yakkodList[i].infected}`.replace(/[^0-9]/,"");
+        _infecTotal += +`${this.yakkodList[i].infected}`.replace(/[^0-9]/, "");
         _timeData.push({
           id: i,
           infecTotal: _infecTotal,
@@ -259,15 +259,17 @@ class VideoController {
     }
 
     let NATION_TEXT = current.nation,
-      NATION_INFECTED = current.infected;
+      NATION_INFECTED = entry ? entry.infecTotal : current.infected;
+
     switch (current.nation) {
       case "$START":
         {
           NATION_TEXT = "Wait for it...";
+          document.title = `${this.oTitle} …`;
         }
         break;
       default: {
-        document.title = `infected: ${entry.infecTotal}`;
+        document.title = `infected: ${NATION_INFECTED}`;
       }
     }
 
@@ -594,26 +596,26 @@ const YAKKO_MAP = {
   "0:00:11:950": { nation: "Haiti", color: "red" },
   "0:00:12:350": { nation: "Jamaica", color: "red" },
   "0:00:12:750": { nation: "Peru", color: "yellow" },
-  
+
   "0:00:13:600": { nation: "Republic Dominica", color: "red" },
   "0:00:14:500": { nation: "Cuba", color: "red" },
   "0:00:15:000": { nation: "Caribbean" },
   "0:00:15:550": { nation: "Greenland", color: "green" },
   "0:00:16:050": { nation: "El Salvador", color: "purple" },
-  
+
   "0:00:17:100": { nation: "Puerto Rico", color: "red" },
   "0:00:17:800": { nation: "Colombia", color: "red" },
   "0:00:18:350": { nation: "Venezuela", color: "green" },
   "0:00:19:200": { nation: "Honduras", color: "darkgreen" },
   "0:00:19:600": { nation: "Guyana", color: "blue" },
-  
+
   "0:00:21:000": { nation: "Guatemala", color: "green" },
   "0:00:21:550": { nation: "Bolivia", color: "blue" },
   "0:00:22:150": { nation: "Argentina", color: "green" },
   "0:00:23:000": { nation: "Ecuador", color: "green" },
   "0:00:23:450": { nation: "Chile", color: "red" },
   "0:00:23:850": { nation: "Brazil", color: "orange" },
-  
+
   "0:00:24:400": { nation: "Costa Rica", color: "yellow" },
   "0:00:25:100": { nation: "Belize", color: "orange" },
   "0:00:25:500": { nation: "Nicaragua", color: "darkgreen" },
@@ -621,7 +623,7 @@ const YAKKO_MAP = {
   "0:00:26:600": { nation: "Bahamas", color: "purple" },
   "0:00:27:100": { nation: "Tobago", color: "purple" },
   "0:00:27:550": { nation: "San Juan", color: "red" },
-  
+
   "0:00:28:650": { nation: "Paraguay", color: "yellow" },
   "0:00:29:100": { nation: "Uruguay", color: "purple" },
   "0:00:29:550": { nation: "Suriname", color: "yellow" },
