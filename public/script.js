@@ -308,7 +308,6 @@ class VideoController {
   hideVideo() {
     this.selectors.videoWrapElement.classList.remove("video-wrap--show");
     this.selectors.videoWrapElement.classList.add("video-wrap--hide");
-    setTimeout(this.selectors.videoElement.pause);
     this.onPPClick({ type: "close" });
   }
 }
