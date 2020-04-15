@@ -259,7 +259,7 @@ class VideoController {
     }
 
     let NATION_TEXT = current.nation,
-      NATION_INFECTED = entry ? entry.infecTotal : current.infected;
+      NATION_INFECTED = current.infected;
 
     switch (current.nation) {
       case "$START":
@@ -269,7 +269,7 @@ class VideoController {
         }
         break;
       default: {
-        document.title = `infected: ${NATION_INFECTED}`;
+        document.title = `infected: ${current.infected}`;
       }
     }
 
