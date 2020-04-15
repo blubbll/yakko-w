@@ -657,7 +657,7 @@ const YAKKO_MAP = {
   "0:00:47:600": { nation: "Iraq", color: "purple" },
   "0:00:48:100": { nation: "Iran", color: "red" },
 
-  "0:00:49:100": { nation: "Syria", color: "purple" },
+  "0:00:49:100": { nation: "Syria", color: "pink" },
   "0:00:49:550": { nation: "Lebanon", color: "pink" },
   "0:00:50:000": { nation: "Israel", color: "yellow" },
   "0:00:50:450": { nation: "Jordan", color: "pink" },
@@ -764,13 +764,13 @@ const YAKKO_MAP = {
   "0:01:40:100": { nation: "Crete", color: "orange" },
   "0:01:40:500": { nation: "Mauritania", color: "darkgreen" },
   "0:01:41:200": { nation: "Transylvania", color: "red" },
-  "0:01:41:800": { nation: "Monaco", color: "" },
-  "0:01:42:200": { nation: "Liechtenstein", color: "" },
-  "0:01:42:600": { nation: "Malta", color: "" },
-  "0:01:43:000": { nation: "West Bank", color: "" },
-  "0:01:43:400": { nation: "Fiji", color: "" },
-  "0:01:43:800": { nation: "Australia", color: "" },
-  "0:01:44:200": { nation: "Sudan", color: "" }
+  "0:01:41:800": { nation: "Monaco", color: "green" },
+  "0:01:42:200": { nation: "Liechtenstein", color: "yellow" },
+  "0:01:42:600": { nation: "Malta", color: "orange" },
+  "0:01:43:000": { nation: "West Bank", color: "yellow" },
+  "0:01:43:400": { nation: "Fiji", color: "pink" },
+  "0:01:43:800": { nation: "Australia", color: "green" },
+  "0:01:44:200": { nation: "Sudan", color: "green" }
 };
 
 {
